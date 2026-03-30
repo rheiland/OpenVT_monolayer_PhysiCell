@@ -1,0 +1,57 @@
+# args= 6
+self.agents=  [Agent(x=-25, y=0, vel_x=0, vel_y=0, vel_x_prev=0, vel_y_prev=0, area=78.54, growth_rate=0.1778, division_area=157.08, norm_rand=2.0, agent_id='e25eb3a0', parent_id=None, ID=0, time_step=0), Agent(x=-20, y=0, vel_x=0, vel_y=0, vel_x_prev=0, vel_y_prev=0, area=78.54, growth_rate=0.1778, division_area=157.08, norm_rand=2.0, agent_id='a332635e', parent_id=None, ID=0, time_step=0), Agent(x=-15, y=0, vel_x=0, vel_y=0, vel_x_prev=0, vel_y_prev=0, area=78.54, growth_rate=0.1778, division_area=157.08, norm_rand=2.0, agent_id='0c2565cd', parent_id=None, ID=0, time_step=0), Agent(x=-10, y=0, vel_x=0, vel_y=0, vel_x_prev=0, vel_y_prev=0, area=78.54, growth_rate=0.1778, division_area=157.08, norm_rand=2.0, agent_id='4774295a', parent_id=None, ID=0, time_step=0), Agent(x=-5, y=0, vel_x=0, vel_y=0, vel_x_prev=0, vel_y_prev=0, area=78.54, growth_rate=0.1778, division_area=157.08, norm_rand=2.0, agent_id='b37fbaf5', parent_id=None, ID=0, time_step=0), Agent(x=0, y=0, vel_x=0, vel_y=0, vel_x_prev=0, vel_y_prev=0, area=78.54, growth_rate=0.1778, division_area=157.08, norm_rand=2.0, agent_id='de8f57cb', parent_id=None, ID=0, time_step=0), Agent(x=5, y=0, vel_x=0, vel_y=0, vel_x_prev=0, vel_y_prev=0, area=78.54, growth_rate=0.1778, division_area=157.08, norm_rand=2.0, agent_id='c069d5e9', parent_id=None, ID=0, time_step=0), Agent(x=10, y=0, vel_x=0, vel_y=0, vel_x_prev=0, vel_y_prev=0, area=78.54, growth_rate=0.1778, division_area=157.08, norm_rand=2.0, agent_id='b07f1aab', parent_id=None, ID=0, time_step=0), Agent(x=15, y=0, vel_x=0, vel_y=0, vel_x_prev=0, vel_y_prev=0, area=78.54, growth_rate=0.1778, division_area=157.08, norm_rand=2.0, agent_id='ceedd7b7', parent_id=None, ID=0, time_step=0), Agent(x=20, y=0, vel_x=0, vel_y=0, vel_x_prev=0, vel_y_prev=0, area=78.54, growth_rate=0.1778, division_area=157.08, norm_rand=2.0, agent_id='8fdf522e', parent_id=None, ID=0, time_step=0), Agent(x=25, y=0, vel_x=0, vel_y=0, vel_x_prev=0, vel_y_prev=0, area=78.54, growth_rate=0.1778, division_area=157.08, norm_rand=2.0, agent_id='08cc25ab', parent_id=None, ID=0, time_step=0)]
+---- load_from_agents(): n= 11
+---- load_from_agents(): self.x[0] = -25.0
+---- load_from_agents(): self.x[1] = -20.0
+---- load_from_agents(): self.x[2] = -15.0
+---- load_from_agents(): self.x[3] = -10.0
+---- load_from_agents(): self.x[4] = -5.0
+---- load_from_agents(): self.x[5] = 0.0
+---- load_from_agents(): self.x[6] = 5.0
+---- load_from_agents(): self.x[7] = 10.0
+---- load_from_agents(): self.x[8] = 15.0
+---- load_from_agents(): self.x[9] = 20.0
+---- load_from_agents(): self.x[10] = 25.0
+Pre-computing 3 steps, 11 cells... ---- load_from_agents(): n= 11
+---- load_from_agents(): self.x[0] = -25.0
+---- load_from_agents(): self.x[1] = -20.0
+---- load_from_agents(): self.x[2] = -15.0
+---- load_from_agents(): self.x[3] = -10.0
+---- load_from_agents(): self.x[4] = -5.0
+---- load_from_agents(): self.x[5] = 0.0
+---- load_from_agents(): self.x[6] = 5.0
+---- load_from_agents(): self.x[7] = 10.0
+---- load_from_agents(): self.x[8] = 15.0
+---- load_from_agents(): self.x[9] = 20.0
+---- load_from_agents(): self.x[10] = 25.0
+_update_velocities_np: x=[-25. -20. -15. -10.  -5.   0.   5.  10.  15.  20.  25.]
+--- update_position(): s.x=[-25. -20. -15. -10.  -5.   0.   5.  10.  15.  20.  25.], s.vx=[-2.50000585e+00 -1.36708422e-11  1.94599832e-16  0.00000000e+00
+  0.00000000e+00 -1.94599832e-16  1.94599832e-16  1.94599832e-16
+  1.94599832e-16  1.36708422e-11  2.50000585e+00]
+--- update_position(): s.x=[-2.53750009e+01 -2.00000000e+01 -1.50000000e+01 -1.00000000e+01
+ -5.00000000e+00 -2.91899747e-17  5.00000000e+00  1.00000000e+01
+  1.50000000e+01  2.00000000e+01  2.53750009e+01], s.vx=0.0
+--- update_position(): s.x=[-2.52500006e+01 -2.00000000e+01 -1.50000000e+01 -1.00000000e+01
+ -5.00000000e+00 -1.94599832e-17  5.00000000e+00  1.00000000e+01
+  1.50000000e+01  2.00000000e+01  2.52500006e+01], s.vx=0.0
+--- update_position(): s.x=[-2.52500006e+01 -2.00000000e+01 -1.50000000e+01 -1.00000000e+01
+ -5.00000000e+00 -1.94599832e-17  5.00000000e+00  1.00000000e+01
+  1.50000000e+01  2.00000000e+01  2.52500006e+01], s.vx=0.0
+--- update_position(): s.x=[-2.52500006e+01 -2.00000000e+01 -1.50000000e+01 -1.00000000e+01
+ -5.00000000e+00 -1.94599832e-17  5.00000000e+00  1.00000000e+01
+  1.50000000e+01  2.00000000e+01  2.52500006e+01], s.vx=0.0
+--- update_position(): s.x=[-2.52500006e+01 -2.00000000e+01 -1.50000000e+01 -1.00000000e+01
+ -5.00000000e+00 -1.94599832e-17  5.00000000e+00  1.00000000e+01
+  1.50000000e+01  2.00000000e+01  2.52500006e+01], s.vx=0.0
+--- update_position(): s.x=[-2.52500006e+01 -2.00000000e+01 -1.50000000e+01 -1.00000000e+01
+ -5.00000000e+00 -1.94599832e-17  5.00000000e+00  1.00000000e+01
+  1.50000000e+01  2.00000000e+01  2.52500006e+01], s.vx=0.0
+--- update_position(): s.x=[-2.52500006e+01 -2.00000000e+01 -1.50000000e+01 -1.00000000e+01
+ -5.00000000e+00 -1.94599832e-17  5.00000000e+00  1.00000000e+01
+  1.50000000e+01  2.00000000e+01  2.52500006e+01], s.vx=0.0
+--- update_position(): s.x=[-2.52500006e+01 -2.00000000e+01 -1.50000000e+01 -1.00000000e+01
+ -5.00000000e+00 -1.94599832e-17  5.00000000e+00  1.00000000e+01
+  1.50000000e+01  2.00000000e+01  2.52500006e+01], s.vx=0.0
+--- update_position(): s.x=[-2.52500006e+01 -2.00000000e+01 -1.50000000e+01 -1.00000000e+01
+ -5.00000000e+00 -1.94599832e-17  5.00000000e+00  1.00000000e+01
+  1.50000000e+01  2.00000000e+01  2.52500006e+01], s.vx=0.0

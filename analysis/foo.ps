@@ -1,0 +1,538 @@
+%!PS-Adobe-
+%%DocumentFonts: Courier Courier-Bold
+% PSP prologue file, version 1.0
+%
+% Copyright (c) 1989 Eric J. Kostelich
+%
+save
+/PSPstart {} def
+/p {	3 1 roll
+	Linespacing mul Textoffset exch sub
+	exch Textwidth Leftmargin add mul Leftmargin add
+	exch moveto show 
+} def
+
+/Setbold { /Courier-Bold findfont Boldsize scalefont setfont } def
+/SF { /Courier findfont Pointsize scalefont setfont } def
+%
+% (string) H  - for placing boldface titles
+%
+/H { Setbold Leftmargin Titleoffset moveto show SF } def
+%
+%  Normal mode - use titles, 54 lines/page
+%
+/Usual {/Leftmargin 66 def  /Textoffset 708 def /Titleoffset 738 def
+	/Boldsize 12 def  /Pointsize 10 def /Linespacing 12 def
+	/Textwidth 480 def /Rotatemode false def
+} def
+%
+%  Plain mode - no titles, 66 lines/page
+%
+/Plain {/Leftmargin 72 def  /Textoffset 756 def
+	/Boldsize 14 def  /Pointsize 9 def /Linespacing 11 def
+	/Textwidth 480 def /Rotatemode false def
+} def
+%
+% Rotated, two-column mode - 65 lines/column
+%
+/Rotated { /Rotatemode true def } def
+/Rotatepage { 612 0 translate 90 rotate
+	/Leftmargin 36 def /Textoffset 550 def /Titleoffset 568 def
+	/Boldsize 12 def  /Pointsize 7 def  /Linespacing 8 def
+	/Textwidth 336 def
+} def
+/Startpage { Rotatemode {Rotatepage} if SF } def
+/Endpage {showpage} def
+/PSPend {restore} def
+%%EndPrologue
+Rotated
+%%Page 1 1
+Startpage
+(abm_slow.py                                                       Wed Mar  4 17:02:12 2026
+       1)H
+0 0(""")p
+0 1(Growing monolayer model in Python)p
+0 2(=================================)p
+0 4(This initial version has no contact inhibition. The goal is to understand why Ph)p
+0 5(ysiCell seems)p
+0 6(to differ from Chaste, in terms of overcrowding/overlapping cells in the center)p
+0 7(of the monolayer)p
+0 8(when it gets too large.)p
+0 10(* Cell size maintenance \(parameter: target cell area A_0\(t\)\))p
+0 11(* start with a single cell at the origin, with area = A_0\(t\))p
+0 12(* Cell growth \(parameters: linear growth rate \))p
+0 13(* Cell division: cells divide when A\(t\) = X * A_0\(0\))p
+0 14(  \(parameter:  X  N\(2, 0.4^2\), truncated such that X > 0,)p
+0 15(   redraw X otherwise\).)p
+0 16(   Observable for an isolated cell: cell cycle duration T = A0\(0\)/\))p
+0 19(This is the slower implementation of the model, to hopefully make it more obviou)p
+0 20(s how)p
+0 21(cells grow and divide. \(The faster version is abm.py, uses numpy, and is a bit m)p
+0 22(ore challenging to see)p
+0 23(the details.\))p
+0 25(""")p
+0 26(import sys)p
+0 27(import math)p
+0 28(import random)p
+0 29(# import uuid)p
+0 30(import csv)p
+0 31(from dataclasses import dataclass, field)p
+0 32(from typing import Optional)p
+0 33(import matplotlib.pyplot as plt)p
+0 34(import matplotlib.patches as patches)p
+0 35(# import mpld3)p
+0 37(print\("# args=",len\(sys.argv\)\))p
+0 38(if len\(sys.argv\) < 5:)p
+0 39(    print\("Usage: <repulsion\(10\)> <max cells> <win size> <split type\(0-2\)>\\n"\))p
+0 40(    exit\(\))p
+0 41(idx=1)p
+0 42(repulsion = float\(sys.argv[idx]\))p
+0 43(idx+=1)p
+0 44(MAX_AGENTS = int\(sys.argv[idx]\))p
+0 45(idx+=1)p
+0 46(win_size = float\(sys.argv[idx]\))p
+0 47(idx+=1)p
+0 48(daughter_split = int\(sys.argv[idx]\))p
+0 50(max_ID = 0)p
+0 52(@dataclass)p
+0 53(class Agent:)p
+0 54(    """)p
+0 55(    An agent with a 2D position, area, and constant growth rate.)p
+0 57(    Attributes:)p
+0 58(        x, y          : Position)p
+0 59(        vel_x, vel_y  : Velocity)p
+0 60(        area        : Current area of the agent.)p
+0 61(        growth_rate   : Rate at which the area increases per time step \(units/st)p
+0 62(ep\).)p
+0 63(        division_area : area at which the agent divides.)p
+0 64(        norm_rand     : X  N\(2, 0.4^2\), truncated such that X > 0, redraw X othe)p
+1 0(rwise)p
+1 1(        ID            : unique integer identifier)p
+1 2(    """)p
+1 3(    x: float)p
+1 4(    y: float)p
+1 5(    vel_x: float)p
+1 6(    vel_y: float)p
+1 7(    area: float = 78.5  # pi * 5^2)p
+1 8(    growth_rate: float = 0.1778   # microns^2\(?\)/min  0.05)p
+1 9(    division_area: float = 157.08        # division area=7.07)p
+1 10(    norm_rand: float = 2.0)p
+1 11(    ID: int = 0)p
+1 12(    time_step: int = 0)p
+1 14(    def grow\(self\) -> None:)p
+1 15(        """Increase area by growth_rate for one time step.""")p
+1 16(            #   -- may need to scale by dt here \(Dom\))p
+1 17(        self.area += self.growth_rate)p
+1 18(        self.time_step += 1)p
+1 19(        # if self.time_step % 5 == 0:)p
+1 21(    def should_divide\(self\) -> bool:)p
+1 22(        """Return True if this agent has reached or exceeded its division area.")p
+1 23("")p
+1 24(        return self.area >= self.division_area)p
+1 26(    def divide\(self, separation: float = 0.5, noise: float = 0.1\) -> tuple["Agen)p
+1 27(t", "Agent"]:)p
+1 28(        global max_ID)p
+1 29(        """)p
+1 30(        Divide this agent into two daughter agents.)p
+1 32(        The daughters have 1/2 the area of the parent. One daughter remains in t)p
+1 33(he parent's position;)p
+1 34(        the other daughter is placed at a random position around the other, so t)p
+1 35(hey just touch.)p
+1 37(        Returns:)p
+1 38(            A tuple of two new Agent instances \(daughter_1, daughter_2\).)p
+1 39(        """)p
+1 41(        daughter_area = self.area / 2)p
+1 42(        daughter_radius = math.sqrt\(daughter_area/math.pi\))p
+1 44(        max_ID += 1)p
+1 46(        theta = random.random\(\) * 6.283185307179    # 2 * math.pi)p
+1 47(        xvec = math.cos\(theta\) * daughter_radius * 2)p
+1 48(        yvec = math.sin\(theta\) * daughter_radius * 2)p
+1 50(        nr1 = random.normalvariate\(mu=2.0, sigma=0.4\)   # mean=2, stddev=0.4)p
+1 51(        while nr1 < 0:)p
+1 52(             nr1 = random.normalvariate\(mu=2.0, sigma=0.4\)   # mean=2, stddev=0.)p
+1 53(4)p
+1 55(        nr2 = random.normalvariate\(mu=2.0, sigma=0.4\)   # mean=2, stddev=0.4)p
+1 56(        while nr2 < 0:)p
+1 57(             nr2 = random.normalvariate\(mu=2.0, sigma=0.4\)   # mean=2, stddev=0.)p
+1 58(4)p
+1 60(        if daughter_split == 0:     # PhysiCell: daughter = parent x,y)p
+1 61(            d1 = Agent\(x=self.x,      y=self.y,      vel_x=0, vel_y=0,)p
+1 62(                    area=daughter_area, growth_rate=self.growth_rate,)p
+1 63(                    division_area=78.54 * nr1, norm_rand=nr1, ID=self.ID\))p
+1 64(            d2 = Agent\(x=self.x + xvec, y=self.y + yvec, vel_x=0, vel_y=0,)p
+Endpage
+%%Page 3 2
+Startpage
+(abm_slow.py                                                       Wed Mar  4 17:02:12 2026
+       2)H
+0 0(                    area=daughter_area, growth_rate=self.growth_rate,)p
+0 1(                    division_area=78.54 * nr2, norm_rand=nr2, ID=max_ID\))p
+0 2(        elif daughter_split == 1:   # equi-split)p
+0 3(            xvec /= 2)p
+0 4(            yvec /= 2)p
+0 5(            d1 = Agent\(x=self.x + xvec,      y=self.y + yvec,      vel_x=0, vel_)p
+0 6(y=0,)p
+0 7(                    area=daughter_area, growth_rate=self.growth_rate,)p
+0 8(                    division_area=78.54 * nr1, norm_rand=nr1, ID=self.ID\))p
+0 9(            d2 = Agent\(x=self.x - xvec, y=self.y - yvec, vel_x=0, vel_y=0,)p
+0 10(                    area=daughter_area, growth_rate=self.growth_rate,)p
+0 11(                    division_area=78.54 * nr2, norm_rand=nr2, ID=max_ID\))p
+0 12(        elif daughter_split == 2:   # equi-split w/ overlap)p
+0 13(            xvec /= 2.5)p
+0 14(            yvec /= 2.5)p
+0 15(            d1 = Agent\(x=self.x + xvec,      y=self.y + yvec,      vel_x=0, vel_)p
+0 16(y=0,)p
+0 17(                    area=daughter_area, growth_rate=self.growth_rate,)p
+0 18(                    division_area=78.54 * nr1, norm_rand=nr1, ID=self.ID\))p
+0 19(            d2 = Agent\(x=self.x - xvec, y=self.y - yvec, vel_x=0, vel_y=0,)p
+0 20(                    area=daughter_area, growth_rate=self.growth_rate,)p
+0 21(                    division_area=78.54 * nr2, norm_rand=nr2, ID=max_ID\))p
+0 23(        return d1, d2)p
+0 26(class Simulation:)p
+0 27(    """)p
+0 28(    Manages a population of Agents over discrete time steps.)p
+0 30(    At each step:)p
+0 31(      1. Each cell grows)p
+0 32(      2. Cells that exceed division_area are replaced by two daughters.)p
+0 33(    """)p
+0 35(    # Relevant parameter values will be passed in)p
+0 36(    def __init__\()p
+0 37(        self,)p
+0 38(        n_seed: int = 0,)p
+0 39(        growth_rate: float = 0.0,)p
+0 40(        division_area: float = 0.0,)p
+0 41(        norm_rand: float = 0.0,)p
+0 42(        initial_area: float = 0.0,)p
+0 43(    \):)p
+0 44(        self.agents: list[Agent] = [)p
+0 45(            Agent\()p
+0 46(                x=0,   # position)p
+0 47(                y=0,)p
+0 48(                vel_x=0,   # velocity)p
+0 49(                vel_y=0,)p
+0 50(                area=initial_area,)p
+0 51(                growth_rate=growth_rate,)p
+0 52(                division_area=division_area,)p
+0 53(                norm_rand=norm_rand,)p
+0 54(            \))p
+0 55(            for _ in range\(n_seed\))p
+0 56(        ])p
+0 57(        self.time: int = 0)p
+0 58(        # self.history: list[dict] = [])p
+0 60(    # involves the crucial assumptions related to "time")p
+0 61(    def step\(self\) -> int:)p
+0 62(        """)p
+0 63(        Advance the simulation by one time step.)p
+1 0(        Returns:)p
+1 1(            Number of division events that occurred this step.)p
+1 2(        """)p
+1 3(        survivors: list[Agent] = [])p
+1 4(        divisions = 0)p
+1 6(        # 1\) Grow all agents)p
+1 7(        for agent in self.agents:)p
+1 8(            agent.grow\(\)      # <----------------------)p
+1 9(            if agent.should_divide\(\):)p
+1 10(                d1, d2 = agent.divide\(\))p
+1 11(                survivors.extend\([d1, d2]\))p
+1 12(                divisions += 1)p
+1 13(            else:)p
+1 14(                survivors.append\(agent\))p
+1 15(            # print\("survivors=",survivors\))p
+1 17(        self.agents = survivors)p
+1 19(        # void standard_update_cell_velocity\( Cell* pCell, Phenotype& phenotype,)p
+1 20( double dt\))p
+1 21(        # for\(neighbor = pCell->get_container\(\)->agent_grid[pCell->get_current_m)p
+1 22(echanics_voxel_index\(\)].begin\(\); neighbor != end; ++neighbor\))p
+1 23(            # {)p
+1 24(                #     pCell->add_potentials\(*neighbor\);)p
+1 25(            # })p
+1 27(        # 2\) Update each agent's velocity vector:  like Cell::add_potentials\(Cel)p
+1 28(l* other_agent\))p
+1 29(        # cell_cell_repulsion_strength = 10.0)p
+1 30(        cell_cell_repulsion_strength = repulsion)p
+1 31(        # cell_cell_repulsion_strength = 0.0)p
+1 33(        max_relax_steps = 1)p
+1 34(        for relax_steps in range\(max_relax_steps\):   # isn't this violating our)p
+1 35(assumptions of time??)p
+1 37(            for agent in self.agents:)p
+1 38(                agent_r = math.sqrt\(agent.area/math.pi\))p
+1 39(                agent.vel_x = 0)p
+1 40(                agent.vel_y = 0)p
+1 41(                for agent2 in self.agents:)p
+1 42(                    if agent.ID != agent2.ID:)p
+1 43(                        # displacement[i] = position[i] - \(*other_agent\).positio)p
+1 44(n[i];)p
+1 45(                        xdel = agent.x - agent2.x   # "displacement" vector in C)p
+1 46(++)p
+1 47(                        ydel = agent.y - agent2.y)p
+1 48(                        dist = math.sqrt\(xdel*xdel + ydel*ydel\))p
+1 49(                        # distance = std::max\(sqrt\(distance\), 0.00001\);)p
+1 51(        # //Repulsive)p
+1 52(        # double R = phenotype.geometry.radius+ \(*other_agent\).phenotype.geometr)p
+1 53(y.radius;)p
+1 55(                        agent2_r = math.sqrt\(agent2.area/math.pi\))p
+1 56(                        if dist < 1.25 * \(agent_r + agent2_r\):)p
+1 57(                            R = agent_r + agent2_r)p
+1 58(                            if dist > R:)p
+1 59(                                temp_r = 0)p
+1 60(                            else:)p
+1 61(                                # print\(f"update velocity of cell {agent.ID} due)p
+1 62( to nbr {agent.ID}"\))p
+1 63(                                temp_r = -dist  # -d)p
+1 64(                                temp_r /= R # -d/R)p
+Endpage
+%%Page 5 3
+Startpage
+(abm_slow.py                                                       Wed Mar  4 17:02:12 2026
+       3)H
+0 0(                                temp_r += 1.0 # 1-d/R)p
+0 1(                                temp_r *= temp_r # \(1-d/R\)^2)p
+0 3(                                # add the relative pressure contribution)p
+0 4(                                # state.simple_pressure += \( temp_r / simple_pre)p
+0 5(ssure_scale \); // New July 2017)p
+0 7(                            # PhysiCell C++ code)p
+0 8(                            # double effective_repulsion = sqrt\( phenotype.mecha)p
+0 9(nics.cell_cell_repulsion_strength * other_agent->phenotype.mechanics.cell_cell_r)p
+0 10(epulsion_strength \);)p
+0 11(                            # effective_repulsion = math.sqrt\(cell_cell_repulsio)p
+0 12(n_strength * cell_cell_repulsion_strength\))p
+0 13(                            # effective_repulsion = cell_cell_repulsion_strength)p
+0 14(                            # temp_r *= effective_repulsion)p
+0 15(                            temp_r *= cell_cell_repulsion_strength)p
+0 17(                            # skip over adhesion, there is none)p
+0 19(                            # if\( fabs\(temp_r\) < 1e-16 \))p
+0 20(                            # { return; })p
+0 21(                            temp_r /= dist)p
+0 23(                            # velocity[i] += displacement[i] * temp_r;)p
+0 24(                            # axpy\( &velocity , temp_r , displacement \);)p
+0 25(                            agent.vel_x += xdel * temp_r)p
+0 26(                            agent.vel_y += ydel * temp_r)p
+0 27(                            # if self.time >= 90 and self.time <=120:  #rwh)p
+0 28(                                # print\(f"--ID={agent.ID}, step={self.time}: upd)p
+0 29(ate velocity for {agent.agent_id}: vel_x={agent.vel_x}, _y={agent.vel_y}"\))p
+0 30(                                # print\(f"--step={self.time}: update velocity fo)p
+0 31(r {agent.ID}: vel_x={agent.vel_x}, _y={agent.vel_y}"\))p
+0 33(            # 3\) Update each agent's position with its velocity)p
+0 34(            #   -- may need to scale by dt here \(Dom\))p
+0 35(            for agent in self.agents:)p
+0 36(                agent.x += agent.vel_x)p
+0 37(                agent.y += agent.vel_y)p
+0 39(        self.time += 1)p
+0 41(        return divisions)p
+0 43(    def run\(self, steps: int, max_agents: int = 500\) -> None:)p
+0 44(        """)p
+0 45(        Run the simulation for a given number of steps or until max_agents is re)p
+0 46(ached.)p
+0 48(        Args:)p
+0 49(            steps:      Maximum number of time steps to run.)p
+0 50(            max_agents: Stop early if population exceeds this threshold.)p
+0 51(        """)p
+0 53(        for _ in range\(steps\):)p
+0 54(            self.step\(\))p
+0 55(            if len\(self.agents\) >= max_agents:)p
+0 56(                print\(f"  Stopped early at t={self.time}: {len\(self.agents\)} age)p
+0 57(nts."\))p
+0 58(                break)p
+0 61(    def precompute\(self, steps: int, max_agents: int = 500\) -> None:)p
+0 62(        """)p
+0 63(        Run the full simulation up-front and store every frame's agent list.)p
+0 64(        Required before calling interactive_viewer\(\).)p
+1 1(        Args:)p
+1 2(            steps:      Number of time steps to pre-compute.)p
+1 3(            max_agents: Stop early if population exceeds this.)p
+1 4(        """)p
+1 5(        import copy)p
+1 6(        print\(f"Pre-computing {steps} steps...", end=" ", flush=True\))p
+1 7(        # Frame 0 = initial state \(before any stepping\))p
+1 8(        self._frames: list[list[Agent]] = [copy.deepcopy\(self.agents\)])p
+1 10(        for _ in range\(steps\):)p
+1 11(            self.step\(\))p
+1 12(            self._frames.append\(copy.deepcopy\(self.agents\)\))p
+1 13(            if len\(self.agents\) >= max_agents:)p
+1 14(                print\(f"\(stopped early at t={self.time}  {len\(self.agents\)} agen)p
+1 15(ts\)", end=" "\))p
+1 16(                break)p
+1 18(        print\(f"done. {len\(self._frames\)} frames stored."\))p
+1 20(        # save final results in .csv for post-processing, e.g., to compute f_i a)p
+1 21(nd a_i)p
+1 22(        file_out = f'py_monolayer_small.csv')p
+1 23(        print\("--> ",file_out\))p
+1 24(        with open\(file_out, "w", newline=""\) as file:)p
+1 25(            writer = csv.writer\(file\))p
+1 27(            writer.writerow\(['x_pos','y_pos','radius_i','norm_rand_i']\))p
+1 28(            for agent in self.agents:)p
+1 29(                # writer.writerow\([x_pos[jdx],y_pos[jdx],radius_i[jdx],f_i[jdx],)p
+1 30(a_i[jdx]]\))p
+1 31(                radius = math.sqrt\(agent.area / math.pi\))p
+1 32(                writer.writerow\([agent.x, agent.y, radius, agent.norm_rand]\))p
+1 35(    def interactive_viewer\(self, title: str = "Agent-Based Model", interval: int)p
+1 36( = 100\) -> None:)p
+1 37(        """)p
+1 38(        Open an interactive matplotlib window with:)p
+1 39(            Step back one frame)p
+1 40(            Step forward one frame)p
+1 41(           /   Play / Pause the full simulation)p
+1 42(          A time-step slider for direct scrubbing)p
+1 44(        Requires precompute\(\) to have been called first.)p
+1 45(        """)p
+1 46(        import copy)p
+1 47(        from matplotlib.widgets import Button, Slider)p
+1 48(        from matplotlib.animation import FuncAnimation)p
+1 50(        if not hasattr\(self, "_frames"\):)p
+1 51(            raise RuntimeError\("Call precompute\(\) before interactive_viewer\(\)."\))p
+1 53(        frames     = self._frames)p
+1 54(        n_frames   = len\(frames\))p
+1 55(        cmap       = plt.cm.plasma)p
+1 57(        fig = plt.figure\(figsize=\(6, 6\), facecolor="#0d0d0d"\))p
+1 58(        fig.suptitle\(title, fontsize=13, fontweight="bold", color="white"\))p
+1 60(        ax_space = fig.add_axes\([0.1, 0.2, 0.8, 0.7]\)   # left: spatial: left, b)p
+1 61(ottom, w, h\))p
+1 63(        ax_space.set_facecolor\("#111111"\))p
+1 64(        ax_space.tick_params\(colors="white"\))p
+Endpage
+%%Page 7 4
+Startpage
+(abm_slow.py                                                       Wed Mar  4 17:02:12 2026
+       4)H
+0 0(        for sp in ax_space.spines.values\(\):)p
+0 1(            sp.set_edgecolor\("#444444"\))p
+0 3(        ax_space.set_aspect\("equal"\))p
+0 4(        ax_space.set_xlabel\("x", color="white"\))p
+0 5(        ax_space.set_ylabel\("y", color="white"\))p
+0 6(        sm = plt.cm.ScalarMappable\(cmap=cmap, norm=plt.Normalize\(0, 10\)\))p
+0 7(        sm.set_array\([]\))p
+0 9(        # Stable world bounds \(union of all frame extents\))p
+0 10(        all_x = [a.x for f in frames for a in f])p
+0 11(        all_y = [a.y for f in frames for a in f])p
+0 12(        # max_r = max\(\(a.area for f in frames for a in f\), default=1\)  # now doi)p
+0 13(ng area, not radii)p
+0 14(        # pad   = max_r * 2)p
+0 15(        pad   = 20)p
+0 16(        # ax_space.set_xlim\(min\(all_x\) - pad, max\(all_x\) + pad\))p
+0 17(        # ax_space.set_ylim\(min\(all_y\) - pad, max\(all_y\) + pad\))p
+0 19(        # win_size = 100  # rwh: hard-code for now)p
+0 20(        # win_size = 150  # rwh: hard-code for now)p
+0 21(        ax_space.set_xlim\(-win_size, win_size\))p
+0 22(        ax_space.set_ylim\(-win_size, win_size\))p
+0 24(        title_text = ax_space.set_title\("", color="white", fontsize=10\))p
+0 26(        # ------------------------------------------------------------------ #)p
+0 27(        # Widget axes)p
+0 28(        # ------------------------------------------------------------------ #)p
+0 29(        btn_color      = "#1e2d3d")p
+0 30(        btn_hover      = "#2e4d6d")p
+0 32(        ax_slider = fig.add_axes\([0.10, 0.10, 0.80, 0.03], facecolor="#1a1a2e"\))p
+0 33(        ax_back   = fig.add_axes\([0.28, 0.02, 0.08, 0.055], facecolor=btn_color\))p
+0 34(        ax_play   = fig.add_axes\([0.38, 0.02, 0.10, 0.055], facecolor=btn_color\))p
+0 35(        ax_fwd    = fig.add_axes\([0.50, 0.02, 0.08, 0.055], facecolor=btn_color\))p
+0 37(        slider   = Slider\(ax_slider, "t", 0, n_frames - 1,)p
+0 38(                          valinit=0, valstep=1, color="#00d4ff"\))p
+0 39(        slider.label.set_color\("white"\))p
+0 40(        slider.valtext.set_color\("white"\))p
+0 42(        btn_back = Button\(ax_back, "", color=btn_color, hovercolor=btn_hover\))p
+0 43(        btn_play = Button\(ax_play, " Play", color=btn_color, hovercolor=btn_hove)p
+0 44(r\))p
+0 45(        btn_fwd  = Button\(ax_fwd,  "", color=btn_color, hovercolor=btn_hover\))p
+0 47(        for btn in \(btn_back, btn_play, btn_fwd\):)p
+0 48(            btn.label.set_color\("white"\))p
+0 49(            btn.label.set_fontsize\(10\))p
+0 51(        # ------------------------------------------------------------------ #)p
+0 52(        # Draw helpers)p
+0 53(        # ------------------------------------------------------------------ #)p
+0 54(        state = {"frame": 0, "playing": False})p
+0 56(        def _draw_frame\(idx: int\) -> None:)p
+0 57(            idx = max\(0, min\(idx, n_frames - 1\)\))p
+0 58(            state["frame"] = idx)p
+0 60(            agent_list = frames[idx])p
+0 61(            # max_gen    = max\(\(a.generation for a in agent_list\), default=0\) or)p
+0 62( 1)p
+0 64(            for p in list\(ax_space.patches\):)p
+1 0(                p.remove\(\))p
+1 1(            for agent in agent_list:)p
+1 2(                # color = cmap\(agent.generation / max\(max_gen, 10\)\))p
+1 3(                ax_space.add_patch\(patches.Circle\()p
+1 4(                    \(agent.x, agent.y\),)p
+1 5(                    radius=math.sqrt\(agent.area / math.pi\),)p
+1 6(                    facecolor='gray', alpha=0.72,)p
+1 7(                    linewidth=1.0, edgecolor="white",)p
+1 8(                \)\))p
+1 10(            title_text.set_text\()p
+1 11(                f"t = {idx}   |   agents = {len\(agent_list\)}"  #   |   max gen =)p
+1 12( {max_gen}")p
+1 13(            \))p
+1 15(            # pop_line.set_data\(all_times[:idx + 1], all_pops[:idx + 1]\))p
+1 16(            # time_marker.set_xdata\([idx, idx]\))p
+1 18(            # Update slider without triggering its callback)p
+1 19(            slider.eventson = False)p
+1 20(            slider.set_val\(idx\))p
+1 21(            slider.eventson = True)p
+1 23(            fig.canvas.draw_idle\(\))p
+1 25(            # mpld3.save_html\(fig, 'index.html'\) # Save directly to an HTML file)p
+1 29(        # ------------------------------------------------------------------ #)p
+1 30(        # Button / slider callbacks)p
+1 31(        # ------------------------------------------------------------------ #)p
+1 32(        def on_back\(_event\):)p
+1 33(            state["playing"] = False)p
+1 34(            btn_play.label.set_text\(" Play"\))p
+1 35(            _draw_frame\(state["frame"] - 1\))p
+1 37(        def on_fwd\(_event\):)p
+1 38(            state["playing"] = False)p
+1 39(            btn_play.label.set_text\(" Play"\))p
+1 40(            _draw_frame\(state["frame"] + 1\))p
+1 42(        def on_play\(_event\):)p
+1 43(            state["playing"] = not state["playing"])p
+1 44(            btn_play.label.set_text\(" Pause" if state["playing"] else " Play"\))p
+1 45(            fig.canvas.draw_idle\(\))p
+1 47(        def on_slider\(val\):)p
+1 48(            state["playing"] = False)p
+1 49(            btn_play.label.set_text\(" Play"\))p
+1 50(            _draw_frame\(int\(val\)\))p
+1 52(        btn_back.on_clicked\(on_back\))p
+1 53(        btn_fwd.on_clicked\(on_fwd\))p
+1 54(        btn_play.on_clicked\(on_play\))p
+1 55(        slider.on_changed\(on_slider\))p
+1 57(        # ------------------------------------------------------------------ #)p
+1 58(        # Timer-driven playback)p
+1 59(        # ------------------------------------------------------------------ #)p
+1 60(        def _tick\(_frame\):)p
+1 61(            if state["playing"]:)p
+1 62(                nxt = state["frame"] + 1)p
+1 63(                if nxt >= n_frames:)p
+1 64(                    state["playing"] = False)p
+Endpage
+%%Page 9 5
+Startpage
+(abm_slow.py                                                       Wed Mar  4 17:02:12 2026
+       5)H
+0 0(                    btn_play.label.set_text\(" Play"\))p
+0 1(                else:)p
+0 2(                    _draw_frame\(nxt\))p
+0 4(        anim = FuncAnimation\(fig, _tick, interval=interval, cache_frame_data=Fal)p
+0 5(se\))p
+0 7(        # Draw initial frame)p
+0 8(        _draw_frame\(0\))p
+0 9(        plt.show\(\))p
+0 11(        return anim  # keep reference alive so GC doesn't kill the timer)p
+0 14(# ---------------------------------------------------------------------------)p
+0 15(# Example usage)p
+0 16(# ---------------------------------------------------------------------------)p
+0 17(if __name__ == "__main__":)p
+0 18(    from matplotlib.animation import FuncAnimation  # ensure import available)p
+0 20(    random.seed\(42\))p
+0 22(    sim = Simulation\()p
+0 23(        n_seed= 1,              # Start with n agents)p
+0 24(        growth_rate= 0.1778,    # 0.889 original;  5x slower=0.1778  \(micron^2 /)p
+0 25( min\))p
+0 26(        division_area= 157.08,  #  vs. double area = 2 * 78.54 = 157.08)p
+0 27(        norm_rand= 2.0,         #  X ~ N\(2, 0.4^2\))p
+0 28(        initial_area= 78.54,    #  area = pi * r^2 = pi * 25 = 78.54)p
+0 29(    \))p
+0 31(    # 1. Pre-compute all frames \(enables backward scrubbing\))p
+0 32(    sim.precompute\(steps=50000, max_agents=MAX_AGENTS\)  # rwh)p
+0 34(    # 2. Open the interactive widget viewer)p
+0 35(    sim.interactive_viewer\()p
+0 36(        title="Growing Monolayer",)p
+0 37(        interval=1,   # rwh: ms between auto-play frames)p
+0 38(    \))p
+Endpage
+%%Trailer
+PSPend

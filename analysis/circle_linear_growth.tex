@@ -1,0 +1,186 @@
+\documentclass[tikz, border=12pt]{standalone}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Colors
+\definecolor{plotblue}{RGB}{30, 100, 200}
+\definecolor{circfill}{RGB}{173, 210, 255}
+\definecolor{circborder}{RGB}{30, 100, 200}
+\definecolor{bglight}{RGB}{245, 248, 255}
+\definecolor{gridcol}{RGB}{210, 220, 235}
+\definecolor{annotcol}{RGB}{80, 80, 80}
+
+\begin{document}
+\begin{tikzpicture}
+
+%% ── background panel ────────────────────────────────────────────────
+\fill[bglight, rounded corners=8pt]
+    (-1.2,-2.8) rectangle (13.6, 7.6);
+\draw[gray!40, rounded corners=8pt, line width=0.6pt]
+    (-1.2,-2.8) rectangle (13.6, 7.6);
+
+%% ── title ───────────────────────────────────────────────────────────
+\node[font=\large\bfseries, text=plotblue!80!black]
+    at (6.2, 7.0) {Linear Growth of a Circle's Area};
+
+%% ════════════════════════════════════════════════════════════════════
+%%  LEFT: A(t) plot
+%% ════════════════════════════════════════════════════════════════════
+\begin{scope}[xshift=0cm, yshift=0cm]
+\begin{axis}[
+    name        = mainplot,
+    width       = 7.8cm,
+    height      = 6.8cm,
+    xmin        = 0,  xmax = 1.18,
+    ymin        = 0,  ymax = 2.35,
+    xlabel      = {$t$},
+    ylabel      = {$A(t)$},
+    xlabel style= {font=\small\bfseries},
+    ylabel style= {font=\small\bfseries, rotate=0, anchor=south},
+    xtick       = {0, 0.5, 1},
+    xticklabels = {$0$, $T/2$, $T$},
+    ytick       = {1, 2},
+    yticklabels = {$A_0$, $2A_0$},
+    tick style  = {color=gray!60},
+    tick label style = {font=\small, color=annotcol},
+    axis line style  = {gray!70, line width=0.8pt},
+    grid        = both,
+    grid style  = {gridcol, line width=0.4pt},
+    minor grid style = {gridcol!50, line width=0.25pt},
+    minor xtick = {0.25, 0.75},
+    minor ytick = {0.5, 1.5},
+    axis background/.style={fill=white},
+    clip        = false,
+]
+
+%% linear A(t) = A0*(1 + t/T)  with A0=1, T=1
+\addplot[
+    plotblue, line width=2.2pt,
+    domain=0:1, samples=100,
+] {1 + x};
+
+%% dashed reference lines for t=0
+\addplot[gray!55, dashed, line width=0.9pt]
+    coordinates {(0,1) (0.5,1)};
+\addplot[gray!55, dashed, line width=0.9pt]
+    coordinates {(0,0) (0,1)};   % already on axis, subtle
+
+%% dashed reference lines for t=T/2
+\addplot[gray!55, dashed, line width=0.9pt]
+    coordinates {(0.5, 0) (0.5, 1.5)};
+\addplot[gray!55, dashed, line width=0.9pt]
+    coordinates {(0, 1.5) (0.5, 1.5)};
+
+%% dashed reference lines for t=T
+\addplot[gray!55, dashed, line width=0.9pt]
+    coordinates {(1, 0) (1, 2)};
+\addplot[gray!55, dashed, line width=0.9pt]
+    coordinates {(0, 2) (1, 2)};
+
+%% highlighted points
+\addplot[
+    only marks, mark=*, mark size=3.2pt,
+    plotblue, fill=white, line width=1.6pt,
+] coordinates {(0,1)  (0.5,1.5)  (1,2)};
+
+%% formula annotation inside plot
+\node[font=\footnotesize, text=plotblue!80!black,
+      fill=white, fill opacity=0.85, inner sep=2.5pt,
+      rounded corners=3pt]
+    at (axis cs:0.72, 0.55)
+    {$A(t)=A_0\!\left(1+\dfrac{t}{T}\right)$};
+
+\end{axis}
+\end{scope}
+
+%% ════════════════════════════════════════════════════════════════════
+%%  RIGHT: three circles at t = 0, T/2, T
+%% ════════════════════════════════════════════════════════════════════
+%
+%  A(t) = A0*(1 + t/T)
+%  r(t) = sqrt(A(t)/pi)
+%
+%  Choose A0 = pi  so r(0)=1 and the circles fit nicely.
+%  r(0)   = 1
+%  r(T/2) = sqrt(1.5)  ≈ 1.2247
+%  r(T)   = sqrt(2)    ≈ 1.4142
+%
+%  Scale factor for display: 1 unit → 0.90 cm
+
+\pgfmathsetmacro{\sc}{0.90}        % display scale (cm per unit)
+\pgfmathsetmacro{\rZ}{1.000}       % r(0)
+\pgfmathsetmacro{\rH}{1.2247}      % r(T/2)
+\pgfmathsetmacro{\rT}{1.4142}      % r(T)
+
+% x-centres of the three circles (in cm, absolute on the page)
+\pgfmathsetmacro{\xZ}{8.60}
+\pgfmathsetmacro{\xH}{10.55}
+\pgfmathsetmacro{\xTT}{12.55}
+\pgfmathsetmacro{\yC}{2.80}        % common y-centre
+
+%% ── circle at t = 0 ─────────────────────────────────────────────────
+\fill[circfill, fill opacity=0.55]
+    (\xZ cm, \yC cm) circle (\rZ*\sc cm);
+\draw[circborder, line width=1.6pt]
+    (\xZ cm, \yC cm) circle (\rZ*\sc cm);
+% radius arrow
+\draw[plotblue!70, -{Stealth[length=4pt]}, line width=0.8pt]
+    (\xZ cm, \yC cm) -- +(\rZ*\sc cm, 0)
+    node[midway, above, font=\tiny, text=plotblue!80!black] {$r_0$};
+% label
+\node[font=\small\bfseries, text=plotblue!80!black]
+    at (\xZ cm, \yC cm - \rZ*\sc cm - 0.40cm) {$t=0$};
+\node[font=\scriptsize, text=annotcol]
+    at (\xZ cm, \yC cm - \rZ*\sc cm - 0.72cm) {$A_0$};
+
+%% ── circle at t = T/2 ───────────────────────────────────────────────
+\fill[circfill, fill opacity=0.55]
+    (\xH cm, \yC cm) circle (\rH*\sc cm);
+\draw[circborder, line width=1.6pt]
+    (\xH cm, \yC cm) circle (\rH*\sc cm);
+\draw[plotblue!70, -{Stealth[length=4pt]}, line width=0.8pt]
+    (\xH cm, \yC cm) -- +(\rH*\sc cm, 0)
+    node[midway, above, font=\tiny, text=plotblue!80!black] {$r_{T/2}$};
+\node[font=\small\bfseries, text=plotblue!80!black]
+    at (\xH cm, \yC cm - \rH*\sc cm - 0.40cm) {$t=T/2$};
+\node[font=\scriptsize, text=annotcol]
+    at (\xH cm, \yC cm - \rH*\sc cm - 0.72cm) {$\tfrac{3}{2}A_0$};
+
+%% ── circle at t = T ─────────────────────────────────────────────────
+\fill[circfill, fill opacity=0.55]
+    (\xTT cm, \yC cm) circle (\rT*\sc cm);
+\draw[circborder, line width=1.6pt]
+    (\xTT cm, \yC cm) circle (\rT*\sc cm);
+\draw[plotblue!70, -{Stealth[length=4pt]}, line width=0.8pt]
+    (\xTT cm, \yC cm) -- +(\rT*\sc cm, 0)
+    node[midway, above, font=\tiny, text=plotblue!80!black] {$r_T$};
+\node[font=\small\bfseries, text=plotblue!80!black]
+    at (\xTT cm, \yC cm - \rT*\sc cm - 0.40cm) {$t=T$};
+\node[font=\scriptsize, text=annotcol]
+    at (\xTT cm, \yC cm - \rT*\sc cm - 0.72cm) {$2A_0$};
+
+%% ── divider line ────────────────────────────────────────────────────
+\draw[gray!45, line width=0.7pt, dashed]
+    (7.85cm, -2.4cm) -- (7.85cm, 7.2cm);
+
+%% ── section label for circles ───────────────────────────────────────
+\node[font=\footnotesize\bfseries, text=plotblue!70!black]
+    at (10.55cm, 6.55cm) {Circle cross-sections};
+
+%% ── compact formula box (bottom right) ─────────────────────────────
+\node[
+    draw=plotblue!40, fill=white, rounded corners=5pt,
+    inner sep=6pt, font=\scriptsize, text=annotcol,
+    align=left,
+] at (10.55cm, -1.70cm) {%
+    $A(t) = A_0\!\left(1+\dfrac{t}{T}\right)$,\quad
+    $r(t) = \sqrt{\dfrac{A(t)}{\pi}}$\\[4pt]
+    $r_0 = \sqrt{A_0/\pi}$,\quad
+    $r_{T/2} = r_0\sqrt{3/2}$,\quad
+    $r_T = r_0\sqrt{2}$
+};
+
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,75 @@
+'''
+(base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml/cdf_1000cells_linear_growth$ python ../beta/param_00_1000cells_cell_area.py ../project 
+
+
+'''
+
+To plot results in the Studio (but won't have the 4-state colormap):
+
+'''
+python ~/git/studio_dev/bin/studio.py -c bg00_cells1000_0/config.xml 
+'''
+and then in Plot tab, Select the output dir, then select the .mat for cells.
+
+
+To plot the last frame (.mat), showing f_i or a_i::
+'''
+python ../beta/plot_cell_scalars-2.py -o bg00_cells1000_0 -f -1 -s a_i
+or,
+python ../beta/plot_cell_scalars-2.py -o bg00_cells1000_0 -f -1 -s f_i
+args= Namespace(output_dir='bg00_cells1000_0', frame=-1, axes_fixed=False, colorbar_name=None, show_colorbar=False, scalar_name='f_i', xmin=None, xmax=None, ymin=None, ymax=None)
+unknown= []
+output_dir=bg00_cells1000_0, current_frame=-1, axes_fixed=False, colorbar=RdBu, show_colorbar=False, xmax=100.0
+'''
+
+To plot results using the 4-state colormap ("-s beta_or_gamma"; however, it's not a discrete colormap!):
+'''
+python ../beta/plot_cell_scalars-2.py -s beta_or_gamma --show_colorbar -o bg00_cells1000_0 -f -1 
+
+python ../beta/plot_cell_scalars_4states.py -s beta_or_gamma --show_colorbar -o bg00_cells1000_0 -f -1
+
+'''
+
+To plot histograms and cumulative dist fns (CDFs), do so from the root dir:
+'''
+
+(base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml$ 
+
+python beta/all_CDF.py 1 cdf_1000cells_linear_growth bg00_cells1000_ a_i
+python beta/all_CDF.py 65 cdf_1000cells_linear_growth bg00_cells1000_ a_i
+python beta/all_CDF.py 100 cdf_1000cells_linear_growth bg00_cells1000_ a_i
+
+python beta/all_CDF_percentiles.py 70 cdf_1000cells_linear_growth bg00_cells1000_ f_i
+
+----------
+- test Dom's PDF/CDF script on a single dir:
+(base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml/cdf_1000cells_linear_growth$ python ../analysis/gen_csv.py bg00_cells1000_42
+-->  cell_data_no_inhibition.csv
+(base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml/cdf_1000cells_linear_growth$ python ../analysis/dom_single.py
+
+
+- prepare proper subdir and ALL .csv files for Dom's script:
+(base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml/cdf_1000cells_linear_growth$ 
+
+python ../analysis/gen_cdf_csv.py 100   # or however many runs
+mkdir PhysiCell_MonolayerGrowth_1000_Data
+zip PhysiCell_MonolayerGrowth_1000_Data.zip cell_data*.csv
+cp PhysiCell_MonolayerGrowth_1000_Data.zip PhysiCell_MonolayerGrowth_1000_Data
+pu PhysiCell_MonolayerGrowth_1000_Data
+unzip PhysiCell_MonolayerGrowth_1000_Data.zip
+mv *.zip ..
+popd
+python ../analysis/dom.py 100
+
+---------------
+- from this dir
+python ../analysis/gen_cdf_idx_time_csv.py 100 443.5
+--> "index,t"
+python ../analysis/gen_cdf_time_series_data.py 100 5.0
+
+pushd PhysiCell_MonolayerGrowth_1000_Data
+rm -rf *
+mv ../run* .
+
+'''
+
