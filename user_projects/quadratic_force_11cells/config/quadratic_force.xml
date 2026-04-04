@@ -1,24 +1,24 @@
 <PhysiCell_settings version="devel-version">
 
     <domain>
-        <x_min>-60.0</x_min>
-        <x_max>60.0</x_max>
-        <y_min>-10.0</y_min>
-        <y_max>10.0</y_max>
+        <x_min>-400.0</x_min>
+        <x_max>400.0</x_max>
+        <y_min>-400.0</y_min>
+        <y_max>400.0</y_max>
         <z_min>-10.0</z_min>
         <z_max>10.0</z_max>
         <dx>20.0</dx>
-        <dy>10.0</dy>
+        <dy>20.0</dy>
         <dz>20.0</dz>
         <use_2D>true</use_2D>
     </domain>
 
     <overall>
-        <max_time units="min">7205.2</max_time>
+        <max_time units="min">720000.0</max_time>
         <time_units>min</time_units>
         <space_units>micron</space_units>
         <dt_diffusion units="min">0.01</dt_diffusion>
-        <dt_mechanics units="min">0.01</dt_mechanics>
+        <dt_mechanics units="min">0.002</dt_mechanics>
         <dt_phenotype units="min">1</dt_phenotype>
     </overall>
 
@@ -27,14 +27,14 @@
     </parallel>
 
     <save>
-        <folder>output_11cells</folder>
+        <folder>output</folder>
         <full_data>
-            <interval units="min">2</interval>
+            <interval units="min">30</interval>
             <enable>true</enable>
         </full_data>
         <SVG>
-            <interval units="min">2</interval>
-            <enable>true</enable>
+            <interval units="min">30</interval>
+            <enable>false</enable>
             <plot_substrate enabled="false" limits="false">
                 <substrate>substrate</substrate>
                 <min_conc />
@@ -51,7 +51,7 @@
         <virtual_wall_at_domain_edge>false</virtual_wall_at_domain_edge>
         <disable_automated_spring_adhesions>false</disable_automated_spring_adhesions>
         <random_seed>0</random_seed>
-        <mechanics_voxel_size>20</mechanics_voxel_size>
+        <mechanics_voxel_size>30</mechanics_voxel_size>
     </options>
 
     <microenvironment_setup>
@@ -88,7 +88,7 @@
             <phenotype>
                 <cycle code="5" name="live">
                     <phase_transition_rates units="1/min">
-                        <rate start_index="0" end_index="0" fixed_duration="true">0.0</rate>
+                        <rate start_index="0" end_index="0" fixed_duration="false">0.0</rate>
                     </phase_transition_rates>
                     <standard_asymmetric_division enabled="False">
                         <asymmetric_division_probability name="default" units="dimensionless">1.0</asymmetric_division_probability>
@@ -97,9 +97,9 @@
                 <death>
                     <model code="100" name="apoptosis">
                         <death_rate units="1/min">0</death_rate>
-                        <phase_durations units="min">
-                            <duration index="0" fixed_duration="true">516</duration>
-                        </phase_durations>
+                        <phase_transition_rates units="1/min">
+                            <rate start_index="0" end_index="1" fixed_duration="false">0.001938</rate>
+                        </phase_transition_rates>
                         <parameters>
                             <unlysed_fluid_change_rate units="1/min">0.05</unlysed_fluid_change_rate>
                             <lysed_fluid_change_rate units="1/min">0</lysed_fluid_change_rate>
@@ -111,16 +111,16 @@
                     </model>
                     <model code="101" name="necrosis">
                         <death_rate units="1/min">0.0</death_rate>
-                        <phase_durations units="min">
-                            <duration index="0" fixed_duration="true">0</duration>
-                            <duration index="1" fixed_duration="true">86400</duration>
-                        </phase_durations>
+                        <phase_transition_rates units="1/min">
+                            <rate start_index="0" end_index="1" fixed_duration="false">9000000000.0</rate>
+                            <rate start_index="1" end_index="2" fixed_duration="true">1.15741e-05</rate>
+                        </phase_transition_rates>
                         <parameters>
-                            <unlysed_fluid_change_rate units="1/min">1.11667e-2</unlysed_fluid_change_rate>
+                            <unlysed_fluid_change_rate units="1/min">1.11667e-02</unlysed_fluid_change_rate>
                             <lysed_fluid_change_rate units="1/min">8.33333e-4</lysed_fluid_change_rate>
-                            <cytoplasmic_biomass_change_rate units="1/min">5.33333e-5</cytoplasmic_biomass_change_rate>
-                            <nuclear_biomass_change_rate units="1/min">2.16667e-3</nuclear_biomass_change_rate>
-                            <calcification_rate units="1/min">0</calcification_rate>
+                            <cytoplasmic_biomass_change_rate units="1/min">5.33333e-05</cytoplasmic_biomass_change_rate>
+                            <nuclear_biomass_change_rate units="1/min">2.16667e-4</nuclear_biomass_change_rate>
+                            <calcification_rate units="1/min">7e-05</calcification_rate>
                             <relative_rupture_volume units="dimensionless">2.0</relative_rupture_volume>
                         </parameters>
                     </model>
@@ -132,12 +132,12 @@
                     <fluid_change_rate units="1/min">0.05</fluid_change_rate>
                     <cytoplasmic_biomass_change_rate units="1/min">0.0045</cytoplasmic_biomass_change_rate>
                     <nuclear_biomass_change_rate units="1/min">0.0055</nuclear_biomass_change_rate>
-                    <calcified_fraction units="dimensionless">0</calcified_fraction>
-                    <calcification_rate units="1/min">0</calcification_rate>
-                    <relative_rupture_volume units="dimensionless">2.0</relative_rupture_volume>
+                    <calcified_fraction units="dimensionless">0.0</calcified_fraction>
+                    <calcification_rate units="1/min">0.0</calcification_rate>
+                    <relative_rupture_volume units="dimensionless">2</relative_rupture_volume>
                 </volume>
                 <mechanics>
-                    <cell_cell_adhesion_strength units="micron/min">0.</cell_cell_adhesion_strength>
+                    <cell_cell_adhesion_strength units="micron/min">0</cell_cell_adhesion_strength>
                     <cell_cell_repulsion_strength units="micron/min">10</cell_cell_repulsion_strength>
                     <relative_maximum_adhesion_distance units="dimensionless">1.25</relative_maximum_adhesion_distance>
                     <cell_adhesion_affinities>
@@ -153,9 +153,9 @@
                     <maximum_number_of_attachments>12</maximum_number_of_attachments>
                 </mechanics>
                 <motility>
-                    <speed units="micron/min">1</speed>
-                    <persistence_time units="min">1</persistence_time>
-                    <migration_bias units="dimensionless">.5</migration_bias>
+                    <speed units="micron/min">1.0</speed>
+                    <persistence_time units="min">5.0</persistence_time>
+                    <migration_bias units="dimensionless">0.5</migration_bias>
                     <options>
                         <enabled>false</enabled>
                         <use_2D>true</use_2D>
@@ -208,8 +208,17 @@
                 </cell_integrity>
             </phenotype>
             <custom_data>
-                <cell_ID conserved="false" units="" description="">0.0</cell_ID>
+                <a_i conserved="false" units="" description="">0.0</a_i>
+                <f_i conserved="false" units="dimensionless" description="">0</f_i>
+                <beta_or_gamma conserved="false" units="" description="">0.0</beta_or_gamma>
                 <num_nbrs conserved="false" units="" description="">0.0</num_nbrs>
+                <norm_rand conserved="false" units="" description="">2</norm_rand>
+                <cell_radius conserved="false" units="" description="">5</cell_radius>
+                <cell_area conserved="false" units="" description="">78.54</cell_area>
+                <time_in_cycle conserved="false" units="" description="">0.0</time_in_cycle>
+                <cell_area_0 conserved="false" units="" description="">78.54</cell_area_0>
+                <arrest_cycle conserved="false" units="" description="">0.0</arrest_cycle>
+                <cell_ID conserved="false" units="" description="">0.0</cell_ID>
             </custom_data>
             <initial_parameter_distributions enabled="false">
           </initial_parameter_distributions>
@@ -219,7 +228,7 @@
     <initial_conditions>
         <cell_positions type="csv" enabled="true">
             <folder>./config</folder>
-            <filename>equilib_11cells_symm.csv</filename>
+            <filename>cell000.csv</filename>
         </cell_positions>
     </initial_conditions>
 
@@ -235,7 +244,10 @@
 
     <user_parameters>
         <number_of_cells type="int" units="none" description="initial number of cells (for each cell type)">0</number_of_cells>
-        <m_stiffness type="double" units="" description="">1</m_stiffness>
-        <cells11 type="bool" units="" description="">true</cells11>
+        <max_cells type="int" units="" description="max # cells in monolayer">1000</max_cells>
+        <beta_threshold type="double" units="" description="">0.</beta_threshold>
+        <gamma_threshold type="double" units="" description="">0.</gamma_threshold>
+        <m_stiffness type="double" units="" description="">10</m_stiffness>
+        <cycle_duration type="double" units="" description="5*T (T=time to reach 90% width of 11-cell relaxation)">443.5</cycle_duration>
     </user_parameters>
 </PhysiCell_settings>

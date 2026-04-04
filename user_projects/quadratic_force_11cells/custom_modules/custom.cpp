@@ -65,10 +65,13 @@
 ###############################################################################
 */
 
+#include <algorithm>    // for std::remove
+
 #include "./custom.h"
 
 double time_90pct;  // time at which the outer cells reach 90% max width
 double xpos_90pct;
+bool cells11_flag = true;
 
 void create_cell_types( void )
 {
@@ -159,6 +162,9 @@ void setup_microenvironment( void )
 
 void setup_tissue( void )
 {
+    // First, decide if we're doing the 11 or 21 cell relaxation model
+    cells11_flag = parameters.bools("cells11");
+
 	double Xmin = microenvironment.mesh.bounding_box[0]; 
 	double Ymin = microenvironment.mesh.bounding_box[1]; 
 	double Zmin = microenvironment.mesh.bounding_box[2]; 
@@ -177,6 +183,7 @@ void setup_tissue( void )
 	double Yrange = Ymax - Ymin; 
 	double Zrange = Zmax - Zmin; 
 	
+
 	// create some of each type of cell 
 	
 	Cell* pC;
@@ -211,8 +218,267 @@ std::vector<std::string> my_coloring_function( Cell* pCell )
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt )
 { return; }
 
+//----------------------------------------
+void generate_neighbor_list( Cell* pCell)
+{
+    // static double tmin= 1330;
+    // static double tmin= 1.0e99;
+    static double tmin= 4.0;
+    static double tmax= 1331;
+    // if (PhysiCell_globals.current_time >= tmin && PhysiCell_globals.current_time <= tmax )
+    //     std::cout << "-------- " <<__FUNCTION__ << ":  t= "<<PhysiCell_globals.current_time << ": pCell->ID= " << pCell->ID<< std::endl;
+
+	pCell->state.neighbors.clear();
+    std::vector<PhysiCell::Cell *> true_nbrs;
+
+    // pCell->custom_data["num_nbrs"] = 0;
+	
+	// ---------- First check the neighbors in my current voxel --------------
+	std::vector<Cell*>::iterator neighbor;
+	std::vector<Cell*>::iterator end = pCell->get_container()->agent_grid[pCell->get_current_mechanics_voxel_index()].end();
+	for(neighbor = pCell->get_container()->agent_grid[pCell->get_current_mechanics_voxel_index()].begin(); neighbor != end; ++neighbor)
+	{
+		// add_potentials_monolayer(pCell, *neighbor);
+
+        Cell* pN = *neighbor;
+        if (pCell->ID == pN->ID) continue;
+
+        bool nbr_exists = false;
+        for (const auto& nbr : pCell->state.neighbors)
+        {
+            if (nbr->ID == pN->ID)
+            {
+                nbr_exists = true;
+                break;
+            }
+        }
+        if (!nbr_exists)
+            pCell->state.neighbors.push_back(*neighbor);
+
+        // if (PhysiCell_globals.current_time >= tmin && PhysiCell_globals.current_time <= tmax )
+        //     std::cout << "   (current voxel) ID= " << pCell->ID<< ",  neighbor ID=" << pN->ID << std::endl;
+        // std::cout << __FUNCTION__ << "  t= "<<PhysiCell_globals.current_time << ": (current voxel) ID= " << pCell->ID<< ",  neighbor ID=" << pN->ID << ", pCell num_nbrs= "<< pCell->custom_data["num_nbrs"] << std::endl;
+                // if (fabs( - 120.0) < 1.e-4)
+	}
+	std::vector<int>::iterator neighbor_voxel_index;
+	std::vector<int>::iterator neighbor_voxel_index_end = 
+		pCell->get_container()->underlying_mesh.moore_connected_voxel_indices[pCell->get_current_mechanics_voxel_index()].end();
+
+	for( neighbor_voxel_index = 
+		pCell->get_container()->underlying_mesh.moore_connected_voxel_indices[pCell->get_current_mechanics_voxel_index()].begin();
+		neighbor_voxel_index != neighbor_voxel_index_end; 
+		++neighbor_voxel_index )
+	{
+		if(!is_neighbor_voxel(pCell, pCell->get_container()->underlying_mesh.voxels[pCell->get_current_mechanics_voxel_index()].center, pCell->get_container()->underlying_mesh.voxels[*neighbor_voxel_index].center, *neighbor_voxel_index))
+			continue;
+		end = pCell->get_container()->agent_grid[*neighbor_voxel_index].end();
+		for(neighbor = pCell->get_container()->agent_grid[*neighbor_voxel_index].begin();neighbor != end; ++neighbor)
+		{
+            Cell* pN = *neighbor;
+            if (pCell->ID == pN->ID) continue;
+
+            bool nbr_exists = false;
+            for (const auto& nbr : pCell->state.neighbors)
+            {
+                if (nbr->ID == pN->ID)
+                {
+                    nbr_exists = true;
+                    // if (pCell->ID == 1 && PhysiCell_globals.current_time >= tmin && PhysiCell_globals.current_time <= tmax )
+                    // {
+                    //     std::cout << "       -- for ID=1, nbr_exists ID=" << nbr->ID << std::endl;
+                    // }
+                    break;
+                }
+            }
+            if (!nbr_exists)
+            {
+                pCell->state.neighbors.push_back(*neighbor);
+                // if (pCell->ID == 1 && PhysiCell_globals.current_time >= tmin && PhysiCell_globals.current_time <= tmax )
+                // {
+                //     std::cout << "       -- for ID=1, push_back ID=" << (*neighbor)->ID << std::endl;
+                // }
+            }
+            // else
+            // {
+            //     if (pCell->ID == 1 && PhysiCell_globals.current_time >= tmin && PhysiCell_globals.current_time <= tmax )
+            //     {
+            //         std::cout << "   ------ for ID=1, nbr_exists ID=" << (*neighbor)->ID << ", so not adding " <<std::endl;
+            //     }
+            // }
+
+            // rwh_standard_update_cell_velocity  t= 0: (current voxel) ID= 0,  neighbor ID=0, pCell num_nbrs= 1
+            // if (PhysiCell_globals.current_time < 0.03)
+            // if (PhysiCell_globals.current_time > 1030.)
+            // if (PhysiCell_globals.current_time >= tmin && PhysiCell_globals.current_time <= tmax )
+            //     std::cout << "   (nbr voxel) ID= " << pCell->ID<< ",  neighbor ID=" << pN->ID << std::endl;
+            //     true_nbrs.push_back(*neighbor);
+                // std::cout << __FUNCTION__ << "  t= "<<PhysiCell_globals.current_time << ": (outer voxel) ID= " << pCell->ID<< ",  neighbor ID=" << pN->ID << std::endl;
+
+			// add_potentials_monolayer(pCell, *neighbor);
+            // if (PhysiCell_globals.current_time > 1030.)
+            //     std::cout << "      -- after add_potentials_monolayer(): (outer voxel) ID= " << pCell->ID<< ",  neighbor ID=" << pN->ID << ", pCell num_nbrs= "<< pCell->custom_data["num_nbrs"] << std::endl;
+		}
+	}
+
+    // if (PhysiCell_globals.current_time >= tmin && PhysiCell_globals.current_time <= tmax )
+    // {
+    //     std::cout << " -- nbrs, minus duplicates:" << std::endl;
+    //     for (const auto& nbr : pCell->state.neighbors)
+    //         std::cout <<  nbr->ID << std::endl;
+    // }
+
+    // if (pCell->ID == 1 && PhysiCell_globals.current_time >= tmin && PhysiCell_globals.current_time <= tmax )
+    // {
+    //     std::cout << " -------- ID 1 has prelim nbrs: " << std::endl;
+    //     for (const auto& nbr : pCell->state.neighbors)
+    //         std::cout <<  nbr->ID << std::endl;
+    // }
+
+
+    // -----------  OK, now let's cull the nbrs to match our distance constraint  --------------
+    for (const auto& nbr : pCell->state.neighbors)
+    {
+        double touching_dist = pCell->phenotype.geometry.radius + nbr->phenotype.geometry.radius;
+
+        double dx = nbr->position[0] - pCell->position[0];
+        double dy = nbr->position[1] - pCell->position[1];
+        // double dz = 0.; // pNeighbor->position[2] - pCell->position[2];
+        //jdouble distance = std::sqrt( dx*dx + dy*dy + dz*dz );
+        double distance = std::sqrt( dx*dx + dy*dy);
+        if (distance > touching_dist)
+        {
+            // if (pCell->ID == 1 && PhysiCell_globals.current_time >= tmin && PhysiCell_globals.current_time <= tmax )
+            // {
+            //     std::cout << " -- for ID=1, removing ID " << nbr->ID << std::endl;
+            // }
+
+            auto new_end = std::remove(pCell->state.neighbors.begin(), pCell->state.neighbors.end(), nbr);
+            // Use vector::erase to remove the elements from the new logical end to the actual end.
+            pCell->state.neighbors.erase(new_end, pCell->state.neighbors.end());
+        }
+    }
+
+    // if (pCell->ID == 1 && PhysiCell_globals.current_time >= tmin && PhysiCell_globals.current_time <= tmax )
+    // {
+    //     std::cout << " ----- ID 1 has true nbrs, overlapping :" << std::endl;
+    //     for (const auto& nbr : pCell->state.neighbors)
+    //         std::cout <<  nbr->ID << std::endl;
+    // }
+
+}
+
 // do every mechanics dt
 void custom_update_cell_velocity( Cell* pCell, Phenotype& phenotype, double dt )
+{
+    pCell->custom_data["cell_ID"] = pCell->ID;
+
+    generate_neighbor_list(pCell);   // <---------------- NEW (rwh)
+
+    // Chaste RepulsionForce / GeneralisedLinearSpringForce cell-cell repulsion.
+    // Parameters matching Relax11.cpp:
+    //   mu    = 5.0  (SetMeinekeSpringStiffness)
+    //   alpha = 5.0  (hard-coded in GeneralisedLinearSpringForce.cpp, unused in pure repulsion)
+    // Note: Chaste uses damping = 1.0 by default, so velocity = force / 1.0 = force.
+    //       Set PhysiCell's damping coefficient to 1.0 in the XML config to match.
+    // static double mu    = 5.0;
+    // static double alpha = 5.0;  // exponential decay constant (attraction branch only)
+
+    // static double mStiffness = 10;  // 5.0;
+    static double m_stiffness = parameters.doubles("m_stiffness");   // 5, 10, ?
+
+    double r_a = phenotype.geometry.radius;
+
+    // Reset velocity; motility not included here (matches Chaste's RelaxationForce-only setup)
+    pCell->velocity = {0.0, 0.0, 0.0};
+
+    pCell->custom_data["num_nbrs"] = 0;
+    // int nbr_ID = -1;
+    // double t_saved;
+    // for( auto pNeighbor : *PhysiCell::all_cells )   // rwh: optimize
+    for (const auto& pNeighbor : pCell->state.neighbors)
+    {
+        // if( pNeighbor == pCell ) continue;
+
+        double r_b = pNeighbor->phenotype.geometry.radius;
+        double rest_length = r_a + r_b;
+
+        // if(std::abs(pCell->position[0]-pNeighbor->position[0]) > rest_length) continue;
+        // else if(std::abs(pCell->position[1]-pNeighbor->position[1]) > rest_length) continue;
+
+        // if (pCell->ID <= 1)
+        // {
+        //     std::cout << "---   nbr ID= " << pNeighbor->ID << ", rest_length= " << rest_length << std::endl;
+        // }
+
+        // Vector from A (pCell) toward B (pNeighbor)
+        double dx = pNeighbor->position[0] - pCell->position[0];
+        double dy = pNeighbor->position[1] - pCell->position[1];
+        double dz = 0.; // pNeighbor->position[2] - pCell->position[2];
+        //jdouble distance = std::sqrt( dx*dx + dy*dy + dz*dz );
+        double distance = std::sqrt( dx*dx + dy*dy);
+
+        if( distance < 1e-12 ) continue;  // avoid division by zero
+
+        double overlap = distance - rest_length;  // negative when cells overlap
+
+        if( overlap >= 0.0 )
+        {
+            continue;
+
+            // Attraction branch (linear * exponential decay); only reached if
+            // distance >= rest_length -- RepulsionForce skips this, but kept
+            // for completeness to match GeneralisedLinearSpringForce exactly.
+
+            // double magnitude = mu * overlap * std::exp( -alpha * overlap / rest_length );
+            // pCell->velocity[0] += magnitude * dx / distance;
+            // pCell->velocity[1] += magnitude * dy / distance;
+            // pCell->velocity[2] += magnitude * dz / distance;
+        }
+        else
+        {
+            pCell->custom_data["num_nbrs"] += 1;   // now performed in custom_cell_rule[_slow], after update_pos
+
+            // if ((pCell->custom_data["num_nbrs"] == 1) && pCell->ID == 1)
+            // {
+            //     // std::cout << "---   cell ID= " << pCell->ID << " has just 1 nbr: ID = " << pNeighbor->ID << ", t="<<PhysiCell_globals.current_time << std::endl;
+            //     nbr_ID = pNeighbor->ID;
+            //     t_saved = PhysiCell_globals.current_time;
+            //     // true_nbrs.push_back();
+
+            //     // std::cout << "---   cell ID= " << pCell->ID << " had nbrs = " << pCell->state.neighbors <<", latest has ID = " << pNeighbor->ID << std::endl;
+            //     // if (pNeighbor->ID != 0)
+            //         // std::cout << "---   cell ID= " << pCell->ID << " has nbr ID = " << pNeighbor->ID << std::endl;
+            // }
+            // Repulsion branch: overlap/rest_length in (-1, 0)
+            // log argument in (0, 1) -> magnitude < 0 -> force points away from B
+
+            // logarithmic (matches Chaste's "stable" form)
+            // double magnitude = mu * std::log( 1.0 + overlap / rest_length );
+
+            // quadratic magnitude, preserving sign for direction
+            double magnitude = m_stiffness * overlap * std::abs(overlap) / rest_length;
+
+            // --- cf. PhysiCell /core: void Cell::add_potentials(Cell* other_agent)
+            //	velocity[i] += displacement[i] * temp_r; 
+    	    // axpy( &velocity , temp_r , displacement );    # core/PhysiCell_cell.cpp
+
+            pCell->velocity[0] += magnitude * dx / distance;
+            pCell->velocity[1] += magnitude * dy / distance;
+            // pCell->velocity[2] += magnitude * dz / distance;
+            // pCell->velocity[2] = 0.0;
+        }
+    }
+    // if ((pCell->custom_data["num_nbrs"] == 1) && pCell->ID == 1)
+    // {
+    //     std::cout << "--- FINAL:   cell ID= " << pCell->ID << " has 1 nbr: ID = " << nbr_ID << ", t_saved="<< t_saved << std::endl;
+    //     // std::cout << "---   cell ID= " << pCell->ID << " had nbrs = " << pCell->state.neighbors <<", latest has ID = " << pNeighbor->ID << std::endl;
+    //     // if (pNeighbor->ID != 0)
+    //         // std::cout << "---   cell ID= " << pCell->ID << " has nbr ID = " << pNeighbor->ID << std::endl;
+    // }
+}
+
+// do every mechanics dt
+void custom_update_cell_velocity_old( Cell* pCell, Phenotype& phenotype, double dt )
 {
     pCell->custom_data["cell_ID"] = pCell->ID;
 
@@ -297,6 +563,9 @@ void custom_cell_rule( Cell* pCell, Phenotype& phenotype , double dt )
     static bool reached_90 = false;
     std::stringstream ss;
 
+    // pCell->custom_data["cell_ID"] = pCell->ID;
+
+
     // if (pCell->ID == 10 && pCell->position[0] >= 90.0)  // 90%, 90pct
     if (pCell->ID == 10)
     {
@@ -326,7 +595,8 @@ void custom_cell_rule( Cell* pCell, Phenotype& phenotype , double dt )
             }
             else
             {
-                if (PhysiCell_globals.current_time / time_90pct > 10.0)
+                // if (PhysiCell_globals.current_time / time_90pct > 10.0)
+                if (cells11_flag && PhysiCell_globals.current_time / time_90pct > 10.0)
                 {
                     std::cout <<"---- "<< __FUNCTION__ << "  calibrated T > 10.  Exit simulation!" << std::endl;
                     std::exit(-1);
