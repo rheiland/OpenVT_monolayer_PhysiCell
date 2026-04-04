@@ -50,6 +50,8 @@ if nargs > 0:
     max_idx = int(sys.argv[1])
 print("max_idx= ",max_idx)
 
+out_dir = "output_11cells"
+
 #for idx in range(len(sys.argv)):
 use_defaults = True
 show_nucleus = 0
@@ -78,15 +80,17 @@ ax0 = fig.gca()
 tvals = []
 xpos = []
 
-vol2494_flag = True
+# vol2494_flag = True
 vol2494_flag = False
 
-if not vol2494_flag:
-    cell_diam = 10
-    dir = 'output_11cells_symm_repuls_10'
-else:
-    cell_diam = 16.825
-    dir = 'dummy_output_11cells_vol2494'
+cell_diam = 10    # assuming using cell with radius=5
+
+# if not vol2494_flag:
+#     cell_diam = 10
+#     out_dir = 'output_11cells_symm_repuls_10'
+# else:
+#     cell_diam = 16.825
+#     dir = 'dummy_output_11cells_vol2494'
 #-----------------------------------------------------
 def get_cells_xpos():
     global current_idx, axes_max,cax2,ax0,tvals,xpos
@@ -99,8 +103,8 @@ def get_cells_xpos():
     # xml_file = os.path.join('.', xml_file_root)
     # xml_file = os.path.join('output_11cells_symm', xml_file_root)
     # xml_file = os.path.join('output_11cells_symm_repuls_5', xml_file_root)
-    # print("-- using dir: ",dir)
-    xml_file = os.path.join(dir, xml_file_root)
+    # print("-- using out_dir: ",out_dir)
+    xml_file = os.path.join(out_dir, xml_file_root)
     # print("xml_file= ",xml_file)
 
     if not Path(xml_file).is_file():
@@ -148,7 +152,7 @@ for idx in range(0,max_idx):
     # xml_file = os.path.join('output_11cells_symm', xml_file_root)
     # xml_file = os.path.join('output_11cells_symm_repuls_5', xml_file_root)
     # xml_file = os.path.join('output_11cells_symm_repuls_10', xml_file_root)
-    xml_file = os.path.join(dir, xml_file_root)
+    xml_file = os.path.join(out_dir, xml_file_root)
     # print("---------- xml_file= ",xml_file)
     # mcds = pyMCDS(xml_file_root, microenv=False, graph=False, verbose=True)
     mcds = pyMCDS(xml_file, microenv=False, graph=False, verbose=False)
@@ -196,6 +200,7 @@ tissue_width = xpos_[:,10] - xpos_[:,0]
 #     tissue_width -= 8.4127   # radius for volume 2494
 # print("tissue_width =",tissue_width)
 with open("pc_plot_11cells.csv", 'w') as f:
+    f.write('time,width\n')
     for idx in range(len(tv)):
         f.write(f'{tv[idx]},{tissue_width[idx]}\n')
 f.close()
