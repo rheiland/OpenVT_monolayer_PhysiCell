@@ -34,6 +34,19 @@ At t=0
 At t~=88, we reach 90% width (leftmost cell has x=-45; rightmost x=45)
 <img src="images/cells11_end.png" width="400" />
 
+<hr>
+
+## 1000 cells, no contact inhibition
+
+Terminology:
+* gamma - fraction of a cell's surface that is free (not in contact with neighbor cells)
+* beta - fraction of a cell's area that is free (not overlapping with neighbor cells)
+
+For this part of the project, we ran 100 replicates of a growing monolayer, with no contact inhibition, up to 1000 cells. We then generate a probability density function and cumulative density function for both gamma and beta.
+
+<img src="images/cdf_pdf_gamma_beta.png" width="600" />
+
+
 ## Funding
 
 NSF #2303695, “Pathways to Enable Open-Source Ecosystems (POSE): PHASE II: Open VT - A Standardized Ecosystem for Virtual Tissue Simulation.”
