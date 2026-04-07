@@ -1,7 +1,5 @@
 # PhysiCell: an Open Source Physics-Based Cell Simulator for 3-D Multicellular Systems
 
-This version came from the "mech_grid_xml" branch of 1.14.2, just so we could easily modify PhysiCell's mechanics voxel size.
-
 This repository provides a PhysiCell model and simulation results for a growing (2D) monolayer. This is one "reference model" in the [OpenVT] (https://www.openvt.org/) project. This project has distinct, but related, sub-projects:
 <ul>
   <li>11 cells, simple relaxation</li>
@@ -46,6 +44,9 @@ For this part of the project, we ran 100 replicates of a growing monolayer, with
 
 <img src="images/cdf_pdf_gamma_beta.png" width="600" />
 
+## Version
+
+This version came from the "mech_grid_xml" branch of PhysiCell 1.14.2, so we could easily modify and experiment with PhysiCell's mechanics voxel size. As it turned out, we did not end up needing this feature, so the 1.14.2 release should suffice for this project.
 
 ## Funding
 
