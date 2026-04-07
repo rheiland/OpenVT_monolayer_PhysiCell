@@ -23,7 +23,7 @@
     </overall>
 
     <parallel>
-        <omp_num_threads>1</omp_num_threads>
+        <omp_num_threads>2</omp_num_threads>
     </parallel>
 
     <save>
@@ -250,6 +250,6 @@
         <cycle_duration type="double" units="" description="5*T (T=time to reach 90% width of 11-cell relaxation)">441.5</cycle_duration>
         <cell_area_0 type="double" units="" description="based on cell volume (and radius)">78.54</cell_area_0>
         <normal_random_flag type="bool" units="" description="are daughter cells doubling size drawn from normal dist">true</normal_random_flag>
-        <rest_length_factor type="double" units="" description="">1.1</rest_length_factor>
+        <rest_length_factor type="double" units="" description="">1.05</rest_length_factor>
     </user_parameters>
 </PhysiCell_settings>
