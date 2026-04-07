@@ -1,5 +1,5 @@
 
-# to find the actual f_i,a_i values, knowing the chosen CDF percentiles: (from root dir)
+# to find the actual f_i,a_i values, knowing the chosen CDF percentiles
 
 ```
 (base) M1P~/git/OpenVT_monolayer_PhysiCell$ python beta/chosen_CDF_pct.py 100 cdf_1000cells_linear_growth  bg00_cells1000_   f_i
