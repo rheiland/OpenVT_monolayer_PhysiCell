@@ -1,5 +1,5 @@
 '''
-(base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml/cdf_1000cells_linear_growth$ python ../beta/param_00_1000cells_cell_area.py ../project 
+(base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ python ../beta/param_00_1000cells_cell_area.py ../project 
 
 
 '''
@@ -51,11 +51,12 @@ python beta/all_CDF_percentiles.py 70 cdf_1000cells_linear_growth bg00_cells1000
 - prepare proper subdir and ALL .csv files for Dom's script:
 (base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml/cdf_1000cells_linear_growth$ 
 
+# the following commands now in doit.sh
 python ../analysis/gen_cdf_csv.py 100   # or however many runs
 mkdir PhysiCell_MonolayerGrowth_1000_Data
 zip PhysiCell_MonolayerGrowth_1000_Data.zip cell_data*.csv
 cp PhysiCell_MonolayerGrowth_1000_Data.zip PhysiCell_MonolayerGrowth_1000_Data
-pu PhysiCell_MonolayerGrowth_1000_Data
+pushd PhysiCell_MonolayerGrowth_1000_Data
 unzip PhysiCell_MonolayerGrowth_1000_Data.zip
 mv *.zip ..
 popd
