@@ -42,9 +42,14 @@ Terminology:
 
 For this part of the project, we ran 100 replicates of a growing monolayer, with no contact inhibition, up to 1000 cells. We then generate a probability density function and cumulative density function for both gamma and beta.
 
-<img src="images/cdf_pdf_gamma_beta.png" width="600" />
+## 5x5 phase diagram for f_i, a_i values
 
-## Version
+phase_diagram_5x5/Readme.md
+
+<img src="images/f_i_values_from_CDF.png" width="400" />  <img src="images/a_i_values_from_CDF.png" width="400" />
+
+
+## PhysiCell release
 
 This version came from the "mech_grid_xml" branch of PhysiCell 1.14.2, so we could easily modify and experiment with PhysiCell's mechanics voxel size. As it turned out, we did not end up needing this feature, so the 1.14.2 release should suffice for this project.
 
