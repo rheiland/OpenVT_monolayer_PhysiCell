@@ -46,13 +46,10 @@ For this part of the project, we ran 100 replicates of a growing monolayer, with
 
 phase_diagram_5x5/Readme.md
 
-<img src="images/f_i_values_from_CDF.png" width="400" />
-
-<img src="images/a_i_values_from_CDF.png" width="400" />
+<img src="images/f_i_values_from_CDF.png" width="400" />  <img src="images/a_i_values_from_CDF.png" width="400" />
 
 
-
-## Version
+## PhysiCell release
 
 This version came from the "mech_grid_xml" branch of PhysiCell 1.14.2, so we could easily modify and experiment with PhysiCell's mechanics voxel size. As it turned out, we did not end up needing this feature, so the 1.14.2 release should suffice for this project.
 
