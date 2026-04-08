@@ -42,9 +42,15 @@ Terminology:
 
 For this part of the project, we ran 100 replicates of a growing monolayer, with no contact inhibition, up to 1000 cells. We then generate a probability density function and cumulative density function for both gamma and beta.
 
+<img src="images/cdf_pdf_gamma_beta.png" width="600" />
+<img src="images/sample_1000cells.png" width="600" />
+(Thanks to Dr. Domenic Germano (@DGermano8) for the nice plotting scripts!)
+
+
+
 ## 5x5 phase diagram for f_i, a_i values
 
-phase_diagram_5x5/Readme.md
+Once we have the CDF for both gamma and beta, we choose fixed percentiles to map back to actual values that will be used as thresholds in the 10K cell monolayer simulations.
 
 <img src="images/f_i_values_from_CDF.png" width="400" />  <img src="images/a_i_values_from_CDF.png" width="400" />
 
