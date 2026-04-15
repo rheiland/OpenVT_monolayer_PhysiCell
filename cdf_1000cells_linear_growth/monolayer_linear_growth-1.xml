@@ -19,7 +19,7 @@
         <space_units>micron</space_units>
         <dt_diffusion units="min">0.01</dt_diffusion>
         <dt_mechanics units="min">0.1</dt_mechanics>
-        <dt_phenotype units="min">6.0</dt_phenotype>
+        <dt_phenotype units="min">1</dt_phenotype>
     </overall>
 
     <parallel>
@@ -27,13 +27,13 @@
     </parallel>
 
     <save>
-        <folder>output_bogus</folder>
+        <folder>output_1Kcells</folder>
         <full_data>
-            <interval units="min">30</interval>
+            <interval units="min">1440</interval>
             <enable>true</enable>
         </full_data>
         <SVG>
-            <interval units="min">60</interval>
+            <interval units="min">20</interval>
             <enable>false</enable>
             <plot_substrate enabled="false" limits="false">
                 <substrate>substrate</substrate>
@@ -219,7 +219,6 @@
                 <cell_area_0 conserved="false" units="" description="">78.54</cell_area_0>
                 <arrest_cycle conserved="false" units="" description="">0.0</arrest_cycle>
                 <cell_ID conserved="false" units="" description="">0.0</cell_ID>
-                <rest_length conserved="false" units="" description="">0.0</rest_length>
             </custom_data>
             <initial_parameter_distributions enabled="false">
           </initial_parameter_distributions>
@@ -248,9 +247,7 @@
         <max_cells type="int" units="" description="max # cells in monolayer">1000</max_cells>
         <beta_threshold type="double" units="" description="">0.</beta_threshold>
         <gamma_threshold type="double" units="" description="">0.</gamma_threshold>
-        <cycle_duration type="double" units="" description="5*T (T=time to reach 90% width of 11-cell relaxation)">441.5</cycle_duration>
-        <cell_area_0 type="double" units="" description="based on cell volume (and radius)">78.54</cell_area_0>
-        <normal_random_flag type="bool" units="" description="are daughter cells doubling size drawn from normal dist">true</normal_random_flag>
-        <rest_length_factor type="double" units="" description="">1.1</rest_length_factor>
+        <m_stiffness type="double" units="" description="">10</m_stiffness>
+        <cycle_duration type="double" units="" description="5*T (T=time to reach 90% width of 11-cell relaxation)">443.5</cycle_duration>
     </user_parameters>
 </PhysiCell_settings>

@@ -1,10 +1,10 @@
 <PhysiCell_settings version="devel-version">
 
     <domain>
-        <x_min>-300.0</x_min>
-        <x_max>300.0</x_max>
-        <y_min>-300.0</y_min>
-        <y_max>300.0</y_max>
+        <x_min>-400.0</x_min>
+        <x_max>400.0</x_max>
+        <y_min>-400.0</y_min>
+        <y_max>400.0</y_max>
         <z_min>-10.0</z_min>
         <z_max>10.0</z_max>
         <dx>20.0</dx>
@@ -14,12 +14,12 @@
     </domain>
 
     <overall>
-        <max_time units="min">14400.0</max_time>
+        <max_time units="min">720000.0</max_time>
         <time_units>min</time_units>
         <space_units>micron</space_units>
         <dt_diffusion units="min">0.01</dt_diffusion>
-        <dt_mechanics units="min">0.1</dt_mechanics>
-        <dt_phenotype units="min">6.0</dt_phenotype>
+        <dt_mechanics units="min">0.002</dt_mechanics>
+        <dt_phenotype units="min">1</dt_phenotype>
     </overall>
 
     <parallel>
@@ -27,13 +27,13 @@
     </parallel>
 
     <save>
-        <folder>output_bogus</folder>
+        <folder>output_linear_growth</folder>
         <full_data>
             <interval units="min">30</interval>
             <enable>true</enable>
         </full_data>
         <SVG>
-            <interval units="min">60</interval>
+            <interval units="min">1440</interval>
             <enable>false</enable>
             <plot_substrate enabled="false" limits="false">
                 <substrate>substrate</substrate>
@@ -51,7 +51,7 @@
         <virtual_wall_at_domain_edge>false</virtual_wall_at_domain_edge>
         <disable_automated_spring_adhesions>false</disable_automated_spring_adhesions>
         <random_seed>0</random_seed>
-        <mechanics_voxel_size>30</mechanics_voxel_size>
+        <mechanics_voxel_size>400</mechanics_voxel_size>
     </options>
 
     <microenvironment_setup>
@@ -219,7 +219,6 @@
                 <cell_area_0 conserved="false" units="" description="">78.54</cell_area_0>
                 <arrest_cycle conserved="false" units="" description="">0.0</arrest_cycle>
                 <cell_ID conserved="false" units="" description="">0.0</cell_ID>
-                <rest_length conserved="false" units="" description="">0.0</rest_length>
             </custom_data>
             <initial_parameter_distributions enabled="false">
           </initial_parameter_distributions>
@@ -248,9 +247,7 @@
         <max_cells type="int" units="" description="max # cells in monolayer">1000</max_cells>
         <beta_threshold type="double" units="" description="">0.</beta_threshold>
         <gamma_threshold type="double" units="" description="">0.</gamma_threshold>
-        <cycle_duration type="double" units="" description="5*T (T=time to reach 90% width of 11-cell relaxation)">441.5</cycle_duration>
-        <cell_area_0 type="double" units="" description="based on cell volume (and radius)">78.54</cell_area_0>
-        <normal_random_flag type="bool" units="" description="are daughter cells doubling size drawn from normal dist">true</normal_random_flag>
-        <rest_length_factor type="double" units="" description="">1.1</rest_length_factor>
+        <m_stiffness type="double" units="" description="">10.</m_stiffness>
+        <cycle_duration type="double" units="" description="5*T (T=time to reach 90% width of 11-cell relaxation)">443.5</cycle_duration>
     </user_parameters>
 </PhysiCell_settings>
