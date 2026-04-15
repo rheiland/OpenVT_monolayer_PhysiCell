@@ -219,7 +219,7 @@
                 <cell_area_0 conserved="false" units="" description="">78.54</cell_area_0>
                 <arrest_cycle conserved="false" units="" description="">0.0</arrest_cycle>
                 <cell_ID conserved="false" units="" description="">0.0</cell_ID>
-                <rest_length conserved="false" units="" description="">0.0</cell_ID>
+                <rest_length conserved="false" units="" description="">0.0</rest_length>
             </custom_data>
             <initial_parameter_distributions enabled="false">
           </initial_parameter_distributions>
