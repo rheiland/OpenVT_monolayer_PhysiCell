@@ -83,5 +83,19 @@ pushd PhysiCell_MonolayerGrowth_1000_Data
 rm -rf *
 mv ../run* .
 
+Plot from:
+(base) M1P~/git/doms_OpenVTMonolayerGrowthProcessing$ jn MonolayerTimeSeries_Plots.ipynb
+
+- if it looks reasonable,
+- zip up results and push to /results (if a .zip is there already, may want to save/rename it)
+
+(base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ zip -r PhysiCell_MonolayerGrowth_1000_Data.zip PhysiCell_MonolayerGrowth_1000_Data   # all the /run dirs
+(base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ mv PhysiCell_MonolayerGrowth_1000_Data.zip ../results/
+(base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ pu ../results
+(base) M1P~/git/OpenVT_monolayer_PhysiCell/results$ gadd PhysiCell_MonolayerGrowth_1000_Data.zip 
+(base) M1P~/git/OpenVT_monolayer_PhysiCell/results$ gcommit "latest"
+(base) M1P~/git/OpenVT_monolayer_PhysiCell/results$ gpush
+
+
 '''
 
