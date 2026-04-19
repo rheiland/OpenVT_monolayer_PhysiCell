@@ -97,5 +97,46 @@ Plot from:
 (base) M1P~/git/OpenVT_monolayer_PhysiCell/results$ gpush
 
 
+------------------------
+- Do single run of deterministic growth, i.e., standard deviation=0 for Normal Random: N(2,0)
+
+(base) M1P~/git/OpenVT_monolayer_PhysiCell$ pcstudio -c config/deterministic_1Kcells.xml
+- output_1K_deterministic
+- interval = 30 min  (--> 148 frames)
+- max_cells = 1024  (or just 1000)
+- gamma,beta thresholds = 0,0
+- cycle_duraton= 443.5
+- normal_random_flag = false  (makes standard deviation=0)
+
+
+(base) M1P~/git/OpenVT_monolayer_PhysiCell$ ll run_1K_deterministic|tail
+...
+-rw-r--r--@ 1 heiland  staff  48170 Apr 10 06:44 data000148.csv
+-rw-r--r--@ 1 heiland  staff   1986 Apr 10 07:19 timeline.txt
+
+(base) M1P~/git/OpenVT_monolayer_PhysiCell$ rm run_1K_deterministic/*
+
+(base) M1P~/git/OpenVT_monolayer_PhysiCell$ rm output_1K_deterministic_time_series/*
+
+# the following will append "_time_series" suffix onto the given output dir:
+(base) M1P~/git/OpenVT_monolayer_PhysiCell$ python analysis/gen_time_series.py output_1K_deterministic 5
+...
+-->  output_1K_deterministic_time_series/data000147.csv
+-->  output_1K_deterministic_time_series/data000148.csv
+(base) M1P~/git/OpenVT_monolayer_PhysiCell$
+
+(base) M1P~/git/OpenVT_monolayer_PhysiCell$ python analysis/gen_idx_time_csv.py output_1K_deterministic 443.5
+sys.argv= ['analysis/gen_idx_time_csv.py', 'output_1K_deterministic', '443.5']
+tau=  443.5
+last_xml_file=  output_1K_deterministic/output00000148.xml
+-->  output_1K_deterministic_time_series/timeline.txt
+
+(base) M1P~/git/OpenVT_monolayer_PhysiCell$ rm -rf run_1K_deterministic
+(base) M1P~/git/OpenVT_monolayer_PhysiCell$ mv output_1K_deterministic_time_series run_1K_deterministic
+
+(base) M1P~/git/OpenVT_monolayer_PhysiCell$ zip -r run_1K_deterministic.zip run_1K_deterministic
+(base) M1P~/git/OpenVT_monolayer_PhysiCell$ mv run_1K_deterministic.zip results
+------------------------
+
 '''
 
