@@ -1,4 +1,4 @@
-# PhysiCell: an Open Source Physics-Based Cell Simulator for 3-D Multicellular Systems
+# Monolayer Growth with PhysiCell
 
 This repository provides a PhysiCell model and simulation results for a growing (2D) monolayer. This is one "reference model" in the [OpenVT] (https://www.openvt.org/) project. This project has distinct, but related, sub-projects:
 <ul>
@@ -8,29 +8,15 @@ This repository provides a PhysiCell model and simulation results for a growing 
   <li>10000 cell monolayer, 5x5 phase diagram of gamma, beta thresholds for contact inhibition</li>
 </ul>
 
-## 11 cells, simple relaxation
+## 11 and 21 cells, simple relaxation
 
-In this model, we have 11 cells along the x-axis. Each cell overlaps its neighbor by a radius length (R=5) at t=0 and then the model undergoes its normal relaxation (repulsion only, there's no cell-cell adhesion).
+In a simple model leading up to the monolayer model, we have 11 cells along the x-axis. Each cell overlaps its neighbor by a radius length (R=5) at t=0 and then the model undergoes its normal relaxation (repulsion only, there's no cell-cell adhesion).
 
-To build this model:
-```
-make load PROJ=quadratic_force_11cells
-make
-./project   # or project.exe on Windows
-# optionally, use PhysiCell Studio to run and visualize results (shown below)
+See https://github.com/rheiland/mechanics_relaxation
 
-# To see the time (mins) that it takes for the cells width to reach 90% of their totally relaxed state:
-more output_11cells/time_90pct.txt
-88.66
-```
-This time to reach 90% relaxed width will represent a cell cycle duration (when cell division would occur). However, based on early results, we eventually chose to use 5x this duration time.
+The time to reach 90% relaxed width will represent a cell cycle duration (when cell division would occur). However, based on early results, we eventually chose to use 5x this duration time.
 
-<img src="images/cells11_t0.png" width="400" />
-At t=0
-<img src="images/cells11_t15.png" width="400" />
-<img src="images/cells11_90pct.png" width="400" />
-At t~=88, we reach 90% width (leftmost cell has x=-45; rightmost x=45)
-<img src="images/cells11_end.png" width="400" />
+We also added 5 additional cells to each end of the 11 cells, for a total of 21 cells, and compared the relaxation mechanics, of both the inner 11 cells and the outer 21, with other modeling frameworks.
 
 <hr>
 
@@ -46,6 +32,11 @@ For this part of the project, we ran 100 replicates of a growing monolayer, with
 <img src="images/sample_1000cells.png" width="600" />
 (Thanks to Dr. Domenic Germano (@DGermano8) for the nice plotting scripts!)
 
+## 10000 cells, max contact inhibition
+
+<img src="images/zoom_10K_f_i_max_inhibition.png" width="500" />
+
+Zoomed ROI of the 10K cells monolayer, coloring by `f_i` (fraction of free cell surface), using gamma and beta thresholds = 1.0 (max for each). Note that daughter cells have stochastic growth since each acquires a doubling area size of N(2, 0.4) (normal random distribution).
 
 
 ## 5x5 phase diagram for f_i, a_i values
@@ -57,8 +48,8 @@ Once we have the CDF for both gamma and beta, we choose fixed percentiles to map
 
 ## PhysiCell release
 
-This version came from the "mech_grid_xml" branch of PhysiCell 1.14.2, so we could easily modify and experiment with PhysiCell's mechanics voxel size. As it turned out, we did not end up needing this feature, so the 1.14.2 release should suffice for this project.
+This version came from the "mech_grid_xml" branch of PhysiCell 1.14.2, so we could easily modify and experiment with PhysiCell's mechanics voxel size. As it turned out, we did not end up using this feature. However, we did include some other PRs for post-1.14.2.
 
 ## Funding
 
-NSF #2303695, “Pathways to Enable Open-Source Ecosystems (POSE): PHASE II: Open VT - A Standardized Ecosystem for Virtual Tissue Simulation.”
+National Science Foundation 2303695 and National Cancer Institute 1U24CA284156-01A1
