@@ -36,7 +36,7 @@ For this part of the project, we ran 100 replicates of a growing monolayer, with
 
 <img src="images/zoom_10K_f_i_max_inhibition.png" width="500" />
 
-Zoomed ROI of the 10K cells monolayer, coloring by `f_i` (fraction of free cell surface), using gamma and beta thresholds = 1.0 (max for each). Note that daughter cells have stochastic growth since each acquires a doubling area size of N(2, 0.4) (normal random distribution).
+Zoomed ROI of the 10K cells monolayer, coloring by `f_i` (fraction of free cell surface), using gamma and beta thresholds = 1.0 (max for each). Note that daughter cells have stochastic growth since each acquires a doubling area size of `A = A_0 *  N(2, 0.4)` (normal random distribution).
 
 
 ## 5x5 phase diagram for f_i, a_i values
