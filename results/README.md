@@ -1,4 +1,4 @@
-# More results
+# NOTE: these results are OLD and need updated
 
 ```
 M1P~/git/OpenVT_monolayer_PhysiCell/phase_diagram_5x5$ python ../beta/plot_cell_scalars_4states.py -s beta_or_gamma --show_colorbar -o out_cell_area_b0.999_g0.948
