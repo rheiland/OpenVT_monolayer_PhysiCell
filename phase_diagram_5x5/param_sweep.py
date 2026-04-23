@@ -57,19 +57,37 @@ output_dirs = []
 # beta_vals  = [0.0, 0.978, 0.988, 0.994, 0.996]   # use 0.0 instead of 0.499 ??
 # gamma_vals = [0.0, 0.711, 0.826, 0.903, 0.911]
 
-# NEW: 3/27/26
+#  3/27/26
 # (base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml$ python beta/chosen_CDF_pct.py 100 cdf_1000cells_linear_growth  bg00_cells1000_  f_i
 # -->
 # x values for %s: 0.00000, 0.72514, 0.83539, 0.90324, 0.91286
-gamma_vals = [0.0, 0.725, 0.835, 0.903, 0.913]
+# gamma_vals = [0.0, 0.725, 0.835, 0.903, 0.913]
 
 # and:
 # (base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml$ python beta/chosen_CDF_pct.py 100 cdf_1000cells_linear_growth  bg00_cells1000_  a_i
 # -->
 # x values for %s: 0.51875, 0.98036, 0.98991, 0.99496, 0.99631
-beta_vals  = [0.0, 0.980, 0.990, 0.995, 0.996]   # use 0.0 instead of 0.xxx
+# beta_vals  = [0.0, 0.980, 0.990, 0.995, 0.996]   # use 0.0 instead of 0.xxx
+
+# NEW: 4/7/26 --------
+# x values for %s: 0.00000, 0.78565, 0.89119, 0.93058, 0.94846
+# gamma_vals= [0.0, 0.786, 0.891, 0.931, 0.948]
+# gamma_vals= [ 0.948]
+# NEW: 4/9/26 - will this produce rough bdy?
+# gamma_vals= [ 0.99]
+
+#x values for %s: 0.49014, 0.98774, 0.99480, 0.99829, 0.99919
+# beta_vals= [0.0, 0.988, 0.995, 0.998, 0.999]
+# beta_vals= [0.0, 0.988]
+# beta_vals= [0.999]
 
 
+# NEW: 4/23/26 --------------------
+# f_i:  x values for %s: 0.0, 0.696, 0.819, 0.895, 0.903
+# a_i:  x values for %s: 0.0, 0.974, 0.987, 0.993, 0.995
+
+gamma_vals= [0.0, 0.696, 0.819, 0.895, 0.903]
+beta_vals= [0.0, 0.974, 0.987, 0.993, 0.995]
 
 # gamma_vals = [0.0, 0.711, 0.826]
 # gamma_vals = [ 0.903, 0.911]
@@ -79,6 +97,8 @@ beta_vals  = [0.0, 0.980, 0.990, 0.995, 0.996]   # use 0.0 instead of 0.xxx
 # gamma_vals = [0.95]
 
 for beta in beta_vals:
+    # if beta == 0.0 or beta == 0.988:
+    #     pass
 
 # for beta in [0.09078]:
 # for beta in [0.95]:
@@ -89,6 +109,10 @@ for beta in beta_vals:
     # for gamma in [0.0, 0.68266, 0.77982, 0.81597, 0.86907]:
     # for gamma in [0.9081]:
     for gamma in gamma_vals:
+
+        # if gamma == 0.99 and beta == 0.999:
+        #     pass
+
         # if beta==0.0 and gamma==0.0:
         #     continue
         # if beta==0.0 and gamma==0.711:
