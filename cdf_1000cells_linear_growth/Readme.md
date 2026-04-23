@@ -1,4 +1,5 @@
 '''
+NOTE! be sure to use <random_seed>system_clock</random_seed> in the config file.
 (base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ python ../beta/param_00_1000cells_cell_area.py ../project 
 
 
@@ -30,37 +31,40 @@ python ../beta/plot_cell_scalars_4states.py -s beta_or_gamma --show_colorbar -o 
 
 '''
 
+<!----------------------------------------------->
 To plot histograms and cumulative dist fns (CDFs), do so from the root dir:
 '''
 
-(base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml$ 
+(base) M1P~/git/PhysiCell_monolayer/OpenVT_monolayer_PhysiCell$ 
+python beta/all_CDF.py 100 cdf_1000cells_linear_growth bg00_cells1000_ f_i
+python beta/all_CDF.py 100 cdf_1000cells_linear_growth bg00_cells1000_ a_i
 
 python beta/all_CDF.py 1 cdf_1000cells_linear_growth bg00_cells1000_ a_i
-python beta/all_CDF.py 65 cdf_1000cells_linear_growth bg00_cells1000_ a_i
-python beta/all_CDF.py 100 cdf_1000cells_linear_growth bg00_cells1000_ a_i
 
 python beta/all_CDF_percentiles.py 70 cdf_1000cells_linear_growth bg00_cells1000_ f_i
 
-----------
+<!----------------------------------------------->
 - test Dom's PDF/CDF script on a single dir:
-(base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml/cdf_1000cells_linear_growth$ python ../analysis/gen_csv.py bg00_cells1000_42
+(base) M1P~/git/PhysiCell_monolayer/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ python ../analysis/gen_csv.py bg00_cells1000_42
 -->  cell_data_no_inhibition.csv
-(base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml/cdf_1000cells_linear_growth$ python ../analysis/dom_single.py
+(base) M1P~/git/PhysiCell_monolayer/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ python ../analysis/dom_single.py
 
 
+<!----------------------------------------------->
 - prepare proper subdir and ALL .csv files for Dom's script:
-(base) M1P~/git/PhysiCell_monolayer/PhysiCell_mech_grid_xml/cdf_1000cells_linear_growth$ 
+(base) M1P~/git/PhysiCell_monolayer/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ 
 
-#---------------------------------
+<!----------------------------------------------->
 for Dom:
 python ../analysis/gen_cdf_time_series_data.py 100 5   #   <max_runs> <cell_radius>
 python ../analysis/gen_cdf_idx_time_csv.py 100 443.5   #   <max_runs>  <5*T cycle duration>
+mkdir PhysiCell_MonolayerGrowth_1000_Data
 mv run* PhysiCell_MonolayerGrowth_1000_Data
 zip -r PhysiCell_MonolayerGrowth_1000_Data.zip PhysiCell_MonolayerGrowth_1000_Data   # confirm < 100MB for github!
 mv PhysiCell_MonolayerGrowth_1000_Data.zip ../results/
 
 
-
+<!----------------------------------------------->
 #---------------------------------
 # the following commands now in doit.sh
 python ../analysis/gen_cdf_csv.py 100   # or however many runs
@@ -139,4 +143,3 @@ last_xml_file=  output_1K_deterministic/output00000148.xml
 ------------------------
 
 '''
-
