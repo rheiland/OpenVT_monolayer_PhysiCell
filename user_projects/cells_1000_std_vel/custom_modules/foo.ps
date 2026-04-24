@@ -1,0 +1,217 @@
+%!PS-Adobe-
+%%DocumentFonts: Courier Courier-Bold
+% PSP prologue file, version 1.0
+%
+% Copyright (c) 1989 Eric J. Kostelich
+%
+save
+/PSPstart {} def
+/p {	3 1 roll
+	Linespacing mul Textoffset exch sub
+	exch Textwidth Leftmargin add mul Leftmargin add
+	exch moveto show 
+} def
+
+/Setbold { /Courier-Bold findfont Boldsize scalefont setfont } def
+/SF { /Courier findfont Pointsize scalefont setfont } def
+%
+% (string) H  - for placing boldface titles
+%
+/H { Setbold Leftmargin Titleoffset moveto show SF } def
+%
+%  Normal mode - use titles, 54 lines/page
+%
+/Usual {/Leftmargin 66 def  /Textoffset 708 def /Titleoffset 738 def
+	/Boldsize 12 def  /Pointsize 10 def /Linespacing 12 def
+	/Textwidth 480 def /Rotatemode false def
+} def
+%
+%  Plain mode - no titles, 66 lines/page
+%
+/Plain {/Leftmargin 72 def  /Textoffset 756 def
+	/Boldsize 14 def  /Pointsize 9 def /Linespacing 11 def
+	/Textwidth 480 def /Rotatemode false def
+} def
+%
+% Rotated, two-column mode - 65 lines/column
+%
+/Rotated { /Rotatemode true def } def
+/Rotatepage { 612 0 translate 90 rotate
+	/Leftmargin 36 def /Textoffset 550 def /Titleoffset 568 def
+	/Boldsize 12 def  /Pointsize 7 def  /Linespacing 8 def
+	/Textwidth 336 def
+} def
+/Startpage { Rotatemode {Rotatepage} if SF } def
+/Endpage {showpage} def
+/PSPend {restore} def
+%%EndPrologue
+Rotated
+%%Page 1 1
+Startpage
+(standard_vel.cpp                                                  Thu Apr 23 15:14:25 2026
+       1)H
+0 0(in core/P*_standard_models.cpp:)p
+0 2(void standard_update_cell_velocity\( Cell* pCell, Phenotype& phenotype, double dt)p
+0 3(\))p
+0 4({)p
+0 5(        if\( pCell->functions.add_cell_basement_membrane_interactions \))p
+0 6(        {)p
+0 7(                pCell->functions.add_cell_basement_membrane_interactions\(pCell,)p
+0 8(phenotype,dt\);)p
+0 9(        })p
+0 11(        pCell->state.simple_pressure = 0.0;)p
+0 12(        pCell->state.neighbors.clear\(\); // new 1.8.0)p
+0 14(        //First check the neighbors in my current voxel)p
+0 15(        std::vector<Cell*>::iterator neighbor;)p
+0 16(        std::vector<Cell*>::iterator end = pCell->get_container\(\)->agent_grid[pC)p
+0 17(ell->get_current_mechanics_voxel_index\(\)].end\(\);)p
+0 18(        for\(neighbor = pCell->get_container\(\)->agent_grid[pCell->get_current_mec)p
+0 19(hanics_voxel_index\(\)].begin\(\); neighbor != end; ++neighbor\))p
+0 20(        {)p
+0 21(                pCell->add_potentials\(*neighbor\);)p
+0 22(        })p
+0 23(        std::vector<int>::iterator neighbor_voxel_index;)p
+0 24(        std::vector<int>::iterator neighbor_voxel_index_end =)p
+0 25(                pCell->get_container\(\)->underlying_mesh.moore_connected_voxel_in)p
+0 26(dices[pCell->get_current_mechanics_voxel_index\(\)].end\(\);)p
+0 28(        for\( neighbor_voxel_index =)p
+0 29(                pCell->get_container\(\)->underlying_mesh.moore_connected_voxel_in)p
+0 30(dices[pCell->get_current_mechanics_voxel_index\(\)].begin\(\);)p
+0 31(                neighbor_voxel_index != neighbor_voxel_index_end;)p
+0 32(                ++neighbor_voxel_index \))p
+0 33(        {)p
+0 34(                if\(!is_neighbor_voxel\(pCell, pCell->get_container\(\)->underlying_)p
+0 35(mesh.voxels[pCell->get_current_mechanics_voxel_index\(\)].center, pCell->get_conta)p
+0 36(iner\(\)->underlying_mesh.voxels[*neighbor_voxel_index].center, *neighbor_voxel_in)p
+0 37(dex\)\))p
+0 38(                        continue;)p
+0 39(                end = pCell->get_container\(\)->agent_grid[*neighbor_voxel_index].)p
+0 40(end\(\);)p
+0 41(                for\(neighbor = pCell->get_container\(\)->agent_grid[*neighbor_voxe)p
+0 42(l_index].begin\(\);neighbor != end; ++neighbor\))p
+0 43(                {)p
+0 44(                        pCell->add_potentials\(*neighbor\);)p
+0 45(                })p
+0 46(        })p
+0 48(        pCell->update_motility_vector\(dt\);)p
+0 49(        pCell->velocity += phenotype.motility.motility_vector;)p
+0 51(        return;)p
+0 52(})p
+0 54(---------------------------------------------)p
+0 55(void Cell::add_potentials\(Cell* other_agent\))p
+0 56({)p
+0 57(        // if\( this->ID == other_agent->ID \))p
+0 58(        if\( this == other_agent \))p
+0 59(        { return; })p
+0 60(/*)p
+0 61(        // new April 2022: don't interact with cells with 0 volume)p
+0 62(        // does not seem to really help)p
+0 63(        if\( other_agent->phenotype.volume.total < 1e-15 \))p
+0 64(        { std::cout << "zero size cell in mechanics!" << std::endl; return; })p
+1 0(*/)p
+1 1(        // 12 uniform neighbors at a close packing distance, after dividing out)p
+1 2(all constants)p
+1 3(        static double simple_pressure_scale = 0.027288820670331; // 12 * \(1 - sq)p
+1 4(rt\(pi/\(2*sqrt\(3\)\)\)\)^2)p
+1 5(        // 9.820170012151277; // 12 * \( 1 - sqrt\(2*pi/sqrt\(3\)\)\)^2)p
+1 7(        double distance = 0;)p
+1 8(        for\( int i = 0 ; i < 3 ; i++ \))p
+1 9(        {)p
+1 10(                displacement[i] = position[i] - \(*other_agent\).position[i];)p
+1 11(                distance += displacement[i] * displacement[i];)p
+1 12(        })p
+1 13(        // Make sure that the distance is not zero)p
+1 15(        distance = std::max\(sqrt\(distance\), 0.00001\);)p
+1 17(        //Repulsive)p
+1 18(        double R = phenotype.geometry.radius+ \(*other_agent\).phenotype.geometry.)p
+1 19(radius;)p
+1 21(        // double RN = phenotype.geometry.nuclear_radius + \(*other_agent\).phenot)p
+1 22(ype.geometry.nuclear_radius;)p
+1 23(        double temp_r, c;)p
+1 24(        if\( distance > R \))p
+1 25(        {)p
+1 26(                temp_r=0;)p
+1 27(        })p
+1 28(        // else if\( distance < RN \))p
+1 29(        // {)p
+1 30(                // double M = 1.0;)p
+1 31(                // c = 1.0 - RN/R;)p
+1 32(                // c *= c;)p
+1 33(                // c -= M;)p
+1 34(                // temp_r = \( c*distance/RN  + M  \);)p
+1 35(        // })p
+1 36(        else)p
+1 37(        {)p
+1 38(                // temp_r = 1 - distance/R;)p
+1 39(                temp_r = -distance; // -d)p
+1 40(                temp_r /= R; // -d/R)p
+1 41(                temp_r += 1.0; // 1-d/R)p
+1 42(                temp_r *= temp_r; // \(1-d/R\)^2)p
+1 44(                // add the relative pressure contribution)p
+1 45(                state.simple_pressure += \( temp_r / simple_pressure_scale \); //)p
+1 46(New July 2017)p
+1 47(        })p
+1 49(        // August 2017 - back to the original if both have same coefficient)p
+1 51(        double effective_repulsion = sqrt\( phenotype.mechanics.cell_cell_repulsi)p
+1 52(on_strength * other_agent->phenotype.mechanics.cell_cell_repulsion_strength \);)p
+1 53(        temp_r *= effective_repulsion;)p
+1 55(        // temp_r *= phenotype.mechanics.cell_cell_repulsion_strength; // origin)p
+1 56(al)p
+1 57(        //////////////////////////////////////////////////////////////////)p
+1 59(        // Adhesive)p
+1 60(        //double max_interactive_distance = parameters.max_interaction_distance_)p
+1 61(factor * phenotype.geometry.radius +)p
+1 62(        //      \(*other_agent\).parameters.max_interaction_distance_factor * \(*ot)p
+1 63(her_agent\).phenotype.geometry.radius;)p
+Endpage
+%%Page 3 2
+Startpage
+(standard_vel.cpp                                                  Thu Apr 23 15:14:25 2026
+       2)H
+0 0(        double max_interactive_distance = phenotype.mechanics.relative_maximum_a)p
+0 1(dhesion_distance * phenotype.geometry.radius +)p
+0 2(                \(*other_agent\).phenotype.mechanics.relative_maximum_adhesion_dis)p
+0 3(tance * \(*other_agent\).phenotype.geometry.radius;)p
+0 5(        if\(distance < max_interactive_distance \))p
+0 6(        {)p
+0 7(                // double temp_a = 1 - distance/max_interactive_distance;)p
+0 8(                double temp_a = -distance; // -d)p
+0 9(                temp_a /= max_interactive_distance; // -d/S)p
+0 10(                temp_a += 1.0; // 1 - d/S)p
+0 11(                temp_a *= temp_a; // \(1-d/S\)^2)p
+0 12(                // temp_a *= phenotype.mechanics.cell_cell_adhesion_strength; //)p
+0 13( original)p
+0 15(                // August 2017 - back to the original if both have same coeffici)p
+0 16(ent)p
+0 17(                // May 2022 - back to oriinal if both affinities are 1)p
+0 18(                int ii = find_cell_definition_index\( this->type \);)p
+0 19(                int jj = find_cell_definition_index\( other_agent->type \);)p
+0 21(                double adhesion_ii = phenotype.mechanics.cell_cell_adhesion_stre)p
+0 22(ngth * phenotype.mechanics.cell_adhesion_affinities[jj];)p
+0 23(                double adhesion_jj = other_agent->phenotype.mechanics.cell_cell_)p
+0 24(adhesion_strength * other_agent->phenotype.mechanics.cell_adhesion_affinities[ii)p
+0 25(];)p
+0 27(                // double effective_adhesion = sqrt\( phenotype.mechanics.cell_ce)p
+0 28(ll_adhesion_strength * other_agent->phenotype.mechanics.cell_cell_adhesion_stren)p
+0 29(gth \);)p
+0 30(                double effective_adhesion = sqrt\( adhesion_ii*adhesion_jj \);)p
+0 31(                temp_a *= effective_adhesion;)p
+0 33(                temp_r -= temp_a;)p
+0 35(                state.neighbors.push_back\(other_agent\); // move here in 1.10.2 s)p
+0 36(o non-adhesive cells also added.)p
+0 37(        })p
+0 38(        /////////////////////////////////////////////////////////////////)p
+0 39(        if\( fabs\(temp_r\) < 1e-16 \))p
+0 40(        { return; })p
+0 41(        temp_r /= distance;)p
+0 42(        // for\( int i = 0 ; i < 3 ; i++ \))p
+0 43(        // {)p
+0 44(        //      velocity[i] += displacement[i] * temp_r;)p
+0 45(        // })p
+0 46(        axpy\( &velocity , temp_r , displacement \);)p
+0 48(        // state.neighbors.push_back\(other_agent\); // new 1.8.0)p
+0 49(        return;)p
+0 50(})p
+Endpage
+%%Trailer
+PSPend
