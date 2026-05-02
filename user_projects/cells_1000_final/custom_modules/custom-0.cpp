@@ -599,22 +599,22 @@ void custom_cell_rule( Cell* pCell, Phenotype& phenotype, double dt )
     if (beta < 0.0)  beta = 0.0;
     pCell->custom_data["a_i"] = beta;
 
-    // {
-    //     // ------Note: don't need to do this block for the 1000 cell, no contact inhibition model!
-    //     pCell->custom_data["arrest_cycle"] =  0.0;  // rwh: improve?
-    //     pCell->custom_data["beta_or_gamma"] = 0;
-    //     if (beta < beta_threshold)
-    //     {
-    //         pCell->custom_data["arrest_cycle"] =  1.0;  // rwh: improve?
-    //         pCell->custom_data["beta_or_gamma"] += 1;
-    //     }
-    //     if (gamma < gamma_threshold)
-    //     {
-    //         pCell->custom_data["arrest_cycle"] =  1.0;  // rwh: improve?
-    //         pCell->custom_data["beta_or_gamma"] += 2;
-    //     }
-    //     return;
-    // }
+    {
+        // ------Note: don't need to do this for the 1000 cell, no contact inhibition model!
+        pCell->custom_data["arrest_cycle"] =  0.0;  // rwh: improve?
+        pCell->custom_data["beta_or_gamma"] = 0;
+        if (beta < beta_threshold)
+        {
+            pCell->custom_data["arrest_cycle"] =  1.0;  // rwh: improve?
+            pCell->custom_data["beta_or_gamma"] += 1;
+        }
+        if (gamma < gamma_threshold)
+        {
+            pCell->custom_data["arrest_cycle"] =  1.0;  // rwh: improve?
+            pCell->custom_data["beta_or_gamma"] += 2;
+        }
+        return;
+    }
 
     return; 
 }
