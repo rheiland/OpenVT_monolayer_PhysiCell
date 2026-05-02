@@ -74,12 +74,13 @@ class Basic_Agent
 	std::vector<double> cell_source_sink_solver_temp2;
 	std::vector<double> cell_source_sink_solver_temp_export1; 
 	std::vector<double> cell_source_sink_solver_temp_export2; 	
-	std::vector<double> previous_velocity; 
+	// std::vector<double> previous_velocity;
 //	bool is_active;
 	
 	std::vector<double> total_extracellular_substrate_change; 
 	
  public:
+	std::vector<double> previous_velocity;   //rwh - too accessible (writable); see below for "get_"
 	bool is_active;
 
 	std::vector<double> * secretion_rates; 
@@ -128,7 +129,8 @@ class Basic_Agent
 	// directly access a vector of gradients, one gradient per substrate 
 	std::vector<gradient>& nearest_gradient_vector( void ); 
 	
-	const std::vector<double>& get_previous_velocity( void );
+	// const std::vector<double>& get_previous_velocity( void );
+    const std::vector<double>& get_previous_velocity() const;   // rwh: append "const"
 };
 
 extern std::vector<Basic_Agent*> all_basic_agents; 
