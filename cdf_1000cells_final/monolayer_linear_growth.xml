@@ -29,7 +29,7 @@
     <save>
         <folder>output_test_rlf</folder>
         <full_data>
-            <interval units="min">720</interval>
+            <interval units="min">30</interval>
             <enable>true</enable>
         </full_data>
         <SVG>

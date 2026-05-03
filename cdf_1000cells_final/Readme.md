@@ -1,9 +1,14 @@
 '''
 rf. monolayer_linear_growth.xml
-rest_length_factor= 1.02, rel max adhesion dist=1.0, cycle_duration= 443.5
+
+Key params:
+save interval=30 (for time series)
+rel max adhesion dist=1.25, rest_length_factor= 1.05, cycle_duration= 443.5
+shorthand:
+rmad=1.25, rlf= 1.05, cycle_duration= 443.5
 
 NOTE! be sure to use <random_seed>system_clock</random_seed> in the config file.
-(base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ python ../beta/param_00_1000cells_cell_area.py ../project 
+(base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_final$ python ../beta/param_00_1000cells_cell_area.py ../project 
 
 
 '''
@@ -39,12 +44,12 @@ To plot histograms and cumulative dist fns (CDFs), do so from the root dir:
 '''
 
 (base) M1P~/git/PhysiCell_monolayer/OpenVT_monolayer_PhysiCell$ 
-python beta/all_CDF.py 100 cdf_1000cells_linear_growth bg00_cells1000_ f_i
-python beta/all_CDF.py 100 cdf_1000cells_linear_growth bg00_cells1000_ a_i
+python beta/all_CDF.py 100 cdf_1000cells_final bg00_cells1000_ f_i
+python beta/all_CDF.py 100 cdf_1000cells_final bg00_cells1000_ a_i
 
-python beta/all_CDF.py 1 cdf_1000cells_linear_growth bg00_cells1000_ a_i
+python beta/all_CDF.py 1 cdf_1000cells_final bg00_cells1000_ a_i
 
-python beta/all_CDF_percentiles.py 100 cdf_1000cells_linear_growth bg00_cells1000_ f_i
+python beta/all_CDF_percentiles.py 100 cdf_1000cells_final bg00_cells1000_ f_i
 ---------
 
 (base) M1P~/git/OpenVT_monolayer_PhysiCell$ 
@@ -64,7 +69,7 @@ python ../analysis/dom_single.py
 
 <!----------------------------------------------->
 - prepare proper subdir and ALL .csv files for Dom's script:
-(base) M1P~/git/PhysiCell_monolayer/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ 
+(base) M1P~/git/PhysiCell_monolayer/OpenVT_monolayer_PhysiCell/cdf_1000cells_final$ 
 
 <!----------------------------------------------->
 for Dom (generate the final time-series .zip for him):
@@ -105,9 +110,9 @@ Plot from:
 - if it looks reasonable,
 - zip up results and push to /results (if a .zip is there already, may want to save/rename it)
 
-(base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ zip -r PhysiCell_MonolayerGrowth_1000_Data.zip PhysiCell_MonolayerGrowth_1000_Data   # all the /run dirs
-(base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ mv PhysiCell_MonolayerGrowth_1000_Data.zip ../results/
-(base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_linear_growth$ pu ../results
+(base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_final$ zip -r PhysiCell_MonolayerGrowth_1000_Data.zip PhysiCell_MonolayerGrowth_1000_Data   # all the /run dirs
+(base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_final$ mv PhysiCell_MonolayerGrowth_1000_Data.zip ../results/
+(base) M1P~/git/OpenVT_monolayer_PhysiCell/cdf_1000cells_final$ pu ../results
 (base) M1P~/git/OpenVT_monolayer_PhysiCell/results$ gadd PhysiCell_MonolayerGrowth_1000_Data.zip 
 (base) M1P~/git/OpenVT_monolayer_PhysiCell/results$ gcommit "latest"
 (base) M1P~/git/OpenVT_monolayer_PhysiCell/results$ gpush
